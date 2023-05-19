@@ -21,6 +21,7 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 1.  npm install 或 yarn
 2.  npm run dev
 3.  代码提交需要符合 eslint、commitlint、stylelint 等规范
+4.  使用前请在 vscode 安装 Prettier eslint stylelint 等插件，方便格式化代码
 
 #### 参与贡献
 
