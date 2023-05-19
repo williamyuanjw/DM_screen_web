@@ -1,7 +1,9 @@
 <template>
 	<div class="home">
-		<IssueAndPr v-model:chartValue="IssueAndPrChart" />
-		<IssueAndPr v-model:chartValue="testCharts" />
+		<div class="chart-list">
+			<IssueAndPr v-model:chartValue="IssueAndPrChart" />
+			<Radia v-model:chartValue="radiaChart" />
+		</div>
 	</div>
 </template>
 
@@ -12,11 +14,11 @@ import { shallowRef, onBeforeUnmount, onMounted } from 'vue';
 import { EChartsType } from 'echarts/core';
 
 const IssueAndPrChart = shallowRef<EChartsType>();
-const testCharts = shallowRef<EChartsType>();
+const radiaChart = shallowRef<EChartsType>();
 const chartResize = _.throttle(() => {
 	IssueAndPrChart.value?.resize && IssueAndPrChart.value?.resize();
-	testCharts.value?.resize && testCharts.value?.resize();
-}, 300);
+	radiaChart.value?.resize && radiaChart.value?.resize();
+}, 0);
 onMounted(() => {
 	window.addEventListener('resize', chartResize);
 });
@@ -30,5 +32,9 @@ onBeforeUnmount(() => {
 .home {
 	width: 100%;
 	height: 100%;
+	.chart-list {
+		display: flex;
+		height: 100%;
+	}
 }
 </style>
