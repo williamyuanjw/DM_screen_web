@@ -159,6 +159,7 @@ setTimeout(() => {
 		width: 880px;
 		height: 430px;
 		padding: 130px 220px 0;
+		margin-inline: 20px;
 		background: url('@/assets/images/form-bg.png') center no-repeat;
 		background-size: 100% 100%;
 		&-icon {
