@@ -1,13 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Vite + Vue + TS</title>
+	</head>
+	<body>
+		<div id="app"></div>
+		<script type="module" src="/src/main.ts"></script>
+
+		<script>
+			!(function (x) {
+				function w() {
+					var v,
+						u,
+						t,
+						tes,
+						s = x.document,
+						r = s.documentElement,
+						a = document.children[0].clientWidth;
+					if (a === 0) {
+						a = x.innerWidth;
+					}
+					if (!v && !u) {
+						var n = !!x.navigator.appVersion.match(/AppleWebKit.*Mobile.*/);
+						v = x.devicePixelRatio;
+						tes = x.devicePixelRatio;
+						v = n ? v : 1;
+						u = 1 / v;
+					}
+					if (!a || a <= 0) {
+						return;
+					}
+					if (a > 980) {
+						r.style.fontSize = '16px';
+					}
+					 else if (a >= 600 && a <= 980) {
+            r.style.fontSize = (a / 1920) * 32 + 'px';
+					}
+					else {
+						r.style.fontSize = '10px';
+					}
+				}
+				x.addEventListener('resize', function () {
+					w();
+				});
+				w();
+			})(window);
+		</script>
+	</body>
 </html>

@@ -37,8 +37,7 @@
 
 <script lang="ts" setup>
 import { Rule } from 'ant-design-vue/lib/form';
-import { reactive } from 'vue';
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 type FormModel = {
