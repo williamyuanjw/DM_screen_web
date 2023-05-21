@@ -20,6 +20,7 @@ console.log(props);
 const emit = defineEmits(['update:chartValue']);
 
 const option: EChartsOption = {
+	backgroundColor: 'transparent',
 	tooltip: {
 		trigger: 'axis',
 		axisPointer: {

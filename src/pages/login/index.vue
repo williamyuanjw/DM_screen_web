@@ -9,7 +9,7 @@
 			</div>
 		</transition>
 
-		<div class="login-header">产品数据分析仪表盘系统</div>
+		<div class="login-header">开源数据发展趋势仪表盘</div>
 
 		<a-form :model="formModel" name="loginForm" class="login-form" @finish="onFinish" :rules="rules">
 			<a-form-item name="userName">
