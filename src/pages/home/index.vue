@@ -3,6 +3,7 @@
 		<div class="chart-list">
 			<home-header />
 			<header-first />
+			<virtual-list />
 			<section></section>
 			<footer></footer>
 		</div>
@@ -12,6 +13,7 @@
 <script setup lang="ts">
 import HomeHeader from './components/home-header/index.vue';
 import HeaderFirst from './components/header-first/index.vue';
+import VirtualList from '@/components/VirtualList/index.vue';
 </script>
 
 <style lang="scss">
