@@ -10,15 +10,15 @@ import IssueAndPr from '@/components/IssuseAndPr/index.vue';
 import Radia from '@/components/Radia/index.vue';
 import { EChartsType } from 'echarts/core';
 import { onBeforeUnmount, onMounted, shallowRef } from 'vue';
-import _ from 'lodash';
+import { debounce } from 'lodash';
 
 const IssueAndPrChart = shallowRef<EChartsType>();
 const radiaChart = shallowRef<EChartsType>();
 
-const chartResize = _.throttle(() => {
+const chartResize = debounce(() => {
 	IssueAndPrChart.value?.resize && IssueAndPrChart.value?.resize();
 	radiaChart.value?.resize && radiaChart.value?.resize();
-}, 0);
+}, 500);
 
 onMounted(() => {
 	window.addEventListener('resize', chartResize);
@@ -31,8 +31,6 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .header-first {
-	position: absolute;
-	top: 45px;
 	display: flex;
 	justify-content: space-between;
 	width: 100%;

@@ -4,8 +4,7 @@
 
 <script setup lang="ts">
 import echarts from '@/echarts';
-import { EChartsType } from 'echarts/core';
-import { EChartsOption } from 'echarts/types/dist/shared';
+import { EChartsCoreOption, EChartsType } from 'echarts/core';
 import { PropType } from 'vue';
 import { onMounted, shallowRef } from 'vue';
 
@@ -19,7 +18,7 @@ console.log(props);
 
 const emit = defineEmits(['update:chartValue']);
 
-const option: EChartsOption = {
+const option: EChartsCoreOption = {
 	backgroundColor: 'transparent',
 	tooltip: {
 		trigger: 'axis',
