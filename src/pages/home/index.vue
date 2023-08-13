@@ -15,7 +15,7 @@
 import HomeHeader from './components/home-header/index.vue';
 import HeaderFirst from './components/header-first/index.vue';
 
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import { shallowRef, onBeforeUnmount, onMounted } from 'vue';
 
 import { EChartsType } from 'echarts/core';
@@ -23,7 +23,7 @@ import { EChartsType } from 'echarts/core';
 const IssueAndPrChart = shallowRef<EChartsType>();
 const radiaChart = shallowRef<EChartsType>();
 
-const chartResize = _.throttle(() => {
+const chartResize = debounce(() => {
 	IssueAndPrChart.value?.resize && IssueAndPrChart.value?.resize();
 	radiaChart.value?.resize && radiaChart.value?.resize();
 }, 300);
