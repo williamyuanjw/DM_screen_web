@@ -20,7 +20,7 @@ module.exports = {
 	// 在JSX中使用单引号而不是双引号
 	jsxSingleQuote: false,
 	// 多行HTML中的>放置在最后一行的结尾，而不是另起一行（默认false）
-	bracketSameLine: true,
+	bracketSameLine: false,
 	//  (x) => {} 箭头函数参数只有一个时是否要有小括号。avoid：省略括号 ,always：不省略括号
 	arrowParens: 'avoid',
 	// 如果文件顶部已经有一个 doclock，这个选项将新建一行注释，并打上@format标记。
@@ -31,8 +31,6 @@ module.exports = {
 	proseWrap: 'preserve',
 	// 在html中空格是否是敏感的 "css" - 遵守CSS显示属性的默认值， "strict" - 空格被认为是敏感的 ，"ignore" - 空格被认为是不敏感的
 	htmlWhitespaceSensitivity: 'css',
-	//将>多行 HTML元素的 放在最后一行的末尾，
-	bracketSameLine: true,
 	// 换行符使用 lf 结尾是 可选值"<auto|lf|crlf|cr>"
 	endOfLine: 'auto',
 	// 这两个选项可用于格式化以给定字符偏移量（分别包括和不包括）开始和结束的代码

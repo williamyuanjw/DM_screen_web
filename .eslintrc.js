@@ -36,7 +36,7 @@ module.exports = {
 	rules: {
 		// 	'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
 		// 	'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-		'prettier/prettier': ['error', { singleQuote: true }],
+		'prettier/prettier': ['error', { singleQuote: true, bracketSameLine: false }],
 		// eslint (http://eslint.cn/docs/rules)
 		'no-var': 'error', // 要求使用 let 或 const 而不是 var
 		'no-multiple-empty-lines': ['error', { max: 1 }], // 不允许多个空行
