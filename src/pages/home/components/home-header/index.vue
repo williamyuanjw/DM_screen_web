@@ -31,21 +31,23 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .home-header {
 	position: relative;
-	height: 60px;
-	padding-top: 5px;
+	height: 65px;
+	padding-top: 4px;
 	text-align: center;
-	background: url('@/assets/images/login-header.png') no-repeat;
+	background: url('@/assets/images/home-header.png') no-repeat;
 	background-size: 100% 100%;
+
 	&-title {
 		font-size: 26px;
 		font-weight: bold;
 		color: #ffffff;
 	}
+
 	&-time {
 		position: absolute;
-		top: 9px;
-		right: 24px;
-		font-size: 15px;
+		top: 30px;
+		right: 30px;
+		font-size: 18px;
 		color: rgb(255 255 255 / 70%);
 	}
 }
