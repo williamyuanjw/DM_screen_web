@@ -82,36 +82,45 @@ setTimeout(() => {
 	from {
 		transform: rotate(0deg);
 	}
+
 	50% {
 		transform: rotate(180deg);
 	}
+
 	to {
 		transform: rotate(360deg);
 	}
 }
+
 @keyframes xz2 {
 	from {
 		transform: rotate(0deg);
 	}
+
 	50% {
 		transform: rotate(-180deg);
 	}
+
 	to {
 		transform: rotate(-360deg);
 	}
 }
+
 .loading-enter,
 .loading-leave-to {
 	opacity: 0;
 }
+
 .loading-enter-to,
 .loading-leave {
 	opacity: 1;
 }
+
 .loading-enter-active,
 .loading-leave-active {
 	transition: all 2s;
 }
+
 .login {
 	position: relative;
 	display: flex;
@@ -121,6 +130,7 @@ setTimeout(() => {
 	height: 100%;
 	background: url('@/assets/images/login-bg.jpg') no-repeat;
 	background-size: 100% 100%;
+
 	#load {
 		position: absolute;
 		z-index: 999;
@@ -131,16 +141,19 @@ setTimeout(() => {
 		height: 100%;
 		background: url('@/assets/images/load-bg.png') no-repeat;
 		background-size: cover;
+
 		.load_img {
 			.jzxz1 {
 				position: absolute;
 				animation: xz1 8s infinite linear;
 			}
+
 			.jzxz2 {
 				animation: xz2 7s infinite linear;
 			}
 		}
 	}
+
 	&-header {
 		position: absolute;
 		top: 0;
@@ -154,6 +167,50 @@ setTimeout(() => {
 		background: url('@/assets/images/login-header.png') center no-repeat;
 		background-size: 100% 100%;
 	}
+
+	@mixin form-layout($width, $height, $padding, $inputFont, $placeFont) {
+		.login-form {
+			width: $width;
+			height: $height;
+			padding-top: $padding;
+
+			&-input {
+				&::v-deep .ant-input {
+					font-size: $inputFont;
+
+					&::placeholder {
+						font-size: $placeFont;
+					}
+				}
+			}
+
+			&-icon {
+				width: $inputFont;
+			}
+
+			&-btn {
+				padding-inline: $inputFont * 5;
+				font-size: $inputFont;
+			}
+
+			::v-deep .ant-btn-lg {
+				height: calc($inputFont * 2 + 5px);
+			}
+		}
+	}
+
+	@media (max-width: 640px) {
+		@include form-layout(900px, 500px, 140px, 25px, 23px);
+	}
+
+	@media (max-width: 480px) {
+		.login-form {
+			::v-deep .ant-form-item {
+				margin-bottom: 8px;
+			}
+		}
+	}
+
 	&-form {
 		width: 880px;
 		height: 430px;
@@ -161,18 +218,22 @@ setTimeout(() => {
 		margin-inline: 20px;
 		background: url('@/assets/images/form-bg.png') center no-repeat;
 		background-size: 100% 100%;
+
 		&-icon {
 			width: 18px;
 			padding-bottom: 2px;
 			margin-right: 8px;
 		}
+
 		&-input {
 			background-color: #071c53;
+
 			&::v-deep .ant-input {
 				font-size: 18px;
 				font-weight: bold;
 				color: #ffffff;
 				background-color: #071c53;
+
 				&::placeholder {
 					font-size: 16px;
 					font-weight: normal;
@@ -180,14 +241,17 @@ setTimeout(() => {
 				}
 			}
 		}
+
 		&::v-deep .ant-form-item-has-error :not(.ant-input-disabled, .ant-input-borderless).ant-input {
 			background-color: #071c53;
 		}
+
 		&::v-deep
 			.ant-form-item-has-error
 			:not(.ant-input-affix-wrapper-disabled, .ant-input-affix-wrapper-borderless).ant-input-affix-wrapper {
 			background-color: #071c53;
 		}
+
 		&-btn {
 			padding-inline: 90px;
 			margin-top: 12px;

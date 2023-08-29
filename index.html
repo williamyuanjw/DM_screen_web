@@ -35,12 +35,10 @@
 					}
 					if (a > 980) {
 						r.style.fontSize = '16px';
-					}
-					 else if (a >= 600 && a <= 980) {
-            r.style.fontSize = (a / 1920) * 32 + 'px';
-					}
-					else {
-						r.style.fontSize = '10px';
+					} else if (a >= 375 && a <= 980) {
+						r.style.fontSize = (a / 1920) * 32 + 'px';
+					} else {
+						r.style.fontSize = '6.25px';
 					}
 				}
 				x.addEventListener('resize', function () {

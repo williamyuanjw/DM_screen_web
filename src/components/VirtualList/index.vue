@@ -36,7 +36,7 @@ const props = defineProps({
 	}
 });
 
-const emit = defineEmits(['getMoreData']);
+const emit = defineEmits(['scroll-end']);
 
 const contentRef = ref<HTMLDivElement>();
 
@@ -157,7 +157,7 @@ const move = () => {
 	if (contentRef.value) {
 		if (positions.value.length && contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom) {
 			contentRef.value.scrollTop = 0;
-			!props.loading && emit('getMoreData');
+			!props.loading && emit('scroll-end');
 			console.log('bottom');
 		} else {
 			contentRef.value.scrollTop += 1;
@@ -194,7 +194,7 @@ const handleScroll = rafThrottle(() => {
 	state.startIndex = binarySearch(positions.value, scrollTop);
 	const bottom = scrollHeight - clientHeight - scrollTop;
 	if (bottom <= 20) {
-		// !props.loading && emit('getMoreData');
+		// !props.loading && emit('scroll-end');
 	}
 });
 
@@ -226,15 +226,18 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .fs-estimated-virtuallist {
+
 	&-container {
 		width: 100%;
 		height: 100%;
 	}
+
 	&-content {
 		width: 100%;
 		height: 100%;
 		overflow: auto;
 	}
+
 	&-list-item {
 		box-sizing: border-box;
 		width: 100%;

@@ -44,9 +44,9 @@ export default defineConfig({
 				// })
 				postCssPxToRem({
 					rootValue: 16, // 1rem的大小
-					propList: ['!min-height', '!min-width', '*'], // 需要转换的属性，这里选择全部都进行转换
+					propList: ['!min-height', '!min-width', '*'], // 需要转换的属性，最小高度和最小宽度不进行转换
 					unitPrecision: 5, //保留rem小数点多少位
-					//selectorBlackList: ['.radius'],  //则是一个对css选择器进行过滤的数组，比如你设置为['fs']，那例如fs-xl类名，里面有关px的样式将不被转换，这里也支持正则写法。
+					selectorBlackList: ['ignore'], //则是一个对css选择器进行过滤的数组，比如你设置为['fs']，那例如fs-xl类名，里面有关px的样式将不被转换，这里也支持正则写法。
 					mediaQuery: false, //媒体查询( @media screen 之类的)中不生效
 					minPixelValue: 1 //px小于12的不会被转换
 				})
