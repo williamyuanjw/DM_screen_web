@@ -17,8 +17,9 @@ const loading = ref<boolean>(true);
 
 <style lang="scss" scoped>
 .module-item {
-	flex: 1;
-	width: 100%;
+	height: 100%;
+
+	// width: 100%;
 	border-image-source: url('@/assets/images/newForm.png');
 	border-image-slice: 50 50 50 50 fill;
 	border-image-width: 50px 50px 50px 50px;
@@ -76,7 +77,6 @@ const loading = ref<boolean>(true);
 }
 
 @keyframes rotation {
-
 	0% {
 		transform: rotate(0deg);
 	}
@@ -87,7 +87,6 @@ const loading = ref<boolean>(true);
 }
 
 @keyframes rotation-back {
-
 	0% {
 		transform: rotate(0deg);
 	}

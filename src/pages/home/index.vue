@@ -2,20 +2,42 @@
 	<div class="home">
 		<div class="chart-list">
 			<home-header />
-			<div class="chart-content">
-				<div class="chart-content-left">
-					<ModuleItem />
-					<ModuleItem />
-					<!-- <ModuleItem /> -->
-				</div>
-				<div class="chart-content-center"></div>
-				<div class="chart-content-right">
-					<ModuleItem />
-					<ModuleItem />
-					<ModuleItem />
-				</div>
-			</div>
+			<div style="padding: 0 8px" class="chart-content">
+				<a-row :gutter="[16, 16]" style="height: 100%">
+					<a-col :xl="{ order: 1, span: 7 }" :span="24" :order="2">
+						<a-row class="chart-content-left" :gutter="[16, 16]">
+							<a-col :xl="24" :span="12">
+								<ModuleItem />
+							</a-col>
+							<a-col :xl="24" :span="12">
+								<ModuleItem />
+							</a-col>
+						</a-row>
 
+						<!-- <ModuleItem /> -->
+					</a-col>
+					<a-col
+						class="chart-content-center"
+						:span="24"
+						:xl="{ order: 2, span: 10 }"
+						:xs="{ order: 1 }"
+						:sm="{ order: 1 }"
+					></a-col>
+					<a-col :xl="{ order: 3, span: 7 }" :span="24" :order="3">
+						<a-row class="chart-content-right" :gutter="[16, 16]">
+							<a-col :xl="24" :span="8">
+								<ModuleItem />
+							</a-col>
+							<a-col :xl="24" :span="8">
+								<ModuleItem />
+							</a-col>
+							<a-col :xl="24" :span="8">
+								<ModuleItem />
+							</a-col>
+						</a-row>
+					</a-col>
+				</a-row>
+			</div>
 			<!-- <header-first /> -->
 			<!-- <virtual-list
 				style="height: 200px"
@@ -71,7 +93,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @keyframes rotate1 {
-
 	from {
 		transform: rotate(0deg);
 	}
@@ -82,7 +103,6 @@ onMounted(() => {
 }
 
 @keyframes rotate2 {
-
 	from {
 		transform: rotate(0deg);
 	}
@@ -103,14 +123,16 @@ onMounted(() => {
 		height: 100%;
 
 		.chart-content {
-			display: flex;
 			height: calc(100% - 65px);
+			padding: 0 16px;
 
 			@mixin flex-left-right() {
-				display: flex;
-				flex: 1.5;
-				flex-direction: column;
-				gap: 8px;
+				height: 100%;
+
+				// display: flex;
+				// flex: 1.5;
+				// flex-direction: column;
+				// gap: 8px;
 			}
 
 			&-left {
@@ -118,8 +140,6 @@ onMounted(() => {
 			}
 
 			&-center {
-				flex: 2;
-				background-size: 100% 100%;
 				border-radius: 27px;
 				border-image-source: url('@/assets/images/center.png');
 				border-image-slice: 27 27 27 27;
@@ -128,6 +148,18 @@ onMounted(() => {
 
 			&-right {
 				@include flex-left-right;
+			}
+		}
+
+		@media (max-width: 600px) {
+			.chart-content {
+				height: calc(100% - 70px);
+			}
+		}
+
+		@media (max-width: 450px) {
+			.chart-content {
+				height: calc(100% - 80px);
 			}
 		}
 	}
@@ -144,7 +176,6 @@ onMounted(() => {
 		transform: translate(-50%, -50%);
 
 		/* 中间区域动画自定义名称 */
-
 		.earth1 {
 			position: absolute;
 			width: 80%;
