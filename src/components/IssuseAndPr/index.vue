@@ -116,13 +116,15 @@ const initCharts = () => {
 };
 
 onMounted(() => {
-	initCharts();
+	setTimeout(() => {
+		initCharts();
+	}, 1000);
 });
 </script>
 
 <style lang="scss">
 .issueAndPrRef {
 	width: 100%;
-	height: 100%;
+	height: 415px;
 }
 </style>

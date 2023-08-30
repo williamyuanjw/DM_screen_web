@@ -46,6 +46,8 @@ onBeforeUnmount(() => {
 		font-size: 26px;
 		font-weight: bold;
 		color: #ffffff;
+
+		// text-shadow: 0 0 0.5rem #0a54ea;
 	}
 
 	&-time {

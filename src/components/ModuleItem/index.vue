@@ -1,7 +1,7 @@
 <template>
 	<div class="module-item">
 		<a-spin wrapperClassName="spinning" :spinning="loading">
-			<div>11</div>
+			<slot />
 			<template #indicator>
 				<div class="circle-3"></div>
 			</template>
@@ -12,14 +12,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const loading = ref<boolean>(true);
+const loading = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
 .module-item {
 	height: 100%;
-
-	// width: 100%;
 	border-image-source: url('@/assets/images/newForm.png');
 	border-image-slice: 50 50 50 50 fill;
 	border-image-width: 50px 50px 50px 50px;
@@ -34,6 +32,10 @@ const loading = ref<boolean>(true);
 			&::after {
 				border-radius: 20px;
 			}
+		}
+
+		::v-deep .ant-spin-container {
+			height: 100%;
 		}
 	}
 }

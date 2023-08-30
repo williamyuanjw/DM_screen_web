@@ -1,3 +1,9 @@
+/* 兼容火狐浏览器 */
+* {
+	scrollbar-color: #eeeeee #ffffff;
+	scrollbar-width: thin;
+}
+
 html,
 body {
 	/* 300px */
@@ -14,3 +20,33 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+/* 滚动条的宽度 */
+
+/* ::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	padding-right: 2px;
+	background-color: transparent;
+} */
+
+/* 外层轨道。可以用display:none让其不显示，也可以添加背景图片，颜色改变显示效果 */
+
+/* ::-webkit-scrollbar-track {
+	width: 5px;
+	border-radius: 50px;
+} */
+
+/* 滚动条的设置 */
+
+/* ::-webkit-scrollbar-thumb {
+	background: #eeeeee;
+	border: 0;
+	border-radius: 10px;
+} */
+
+/* 滚动条移上去的背景 */
+
+/* ::-webkit-scrollbar-thumb:hover {
+	background: #eeeeee;
+} */

@@ -1,3 +1,5 @@
+import { EChartsType } from 'echarts/core';
+
 /**
  * @description 延迟触发raf
  * @param callback 回调
@@ -38,3 +40,26 @@ export function delayRef(callback: () => void) {
 	timer = requestAnimationFrame(frame);
 	return timer;
 }
+
+/**
+ *
+ * @returns 根据rem计算出的px
+ */
+export const getHtmlFontPX = (remValue: number) => {
+	const fontSize = window.getComputedStyle(document.documentElement, null).fontSize.replace('px', '');
+	return Number(fontSize) * remValue + 'px';
+};
+
+/**
+ * @description 处理图表resize
+ * @returns HTML元素上的fontSize设置
+ */
+export const handleChartResize = (chartRef: EChartsType) => {
+	chartRef &&
+		chartRef.resize({
+			animation: {
+				duration: 300,
+				easing: 'cubicInOut'
+			}
+		});
+};
