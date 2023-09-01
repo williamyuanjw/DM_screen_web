@@ -62,7 +62,7 @@ export default function (): ChartType {
 				containLabel: true
 			},
 			toolbox: {
-				top: '9.5%',
+				top: '5%',
 				right: '3%',
 				iconStyle: {
 					borderColor: '#fff'

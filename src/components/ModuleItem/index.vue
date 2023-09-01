@@ -1,5 +1,6 @@
 <template>
 	<div class="module-item">
+		<h2>{{ title }}</h2>
 		<a-spin wrapperClassName="spinning" :spinning="loading">
 			<slot />
 			<template #indicator>
@@ -12,15 +13,62 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+defineProps({
+	title: {
+		type: String,
+		default: '标题'
+	}
+});
+
 const loading = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
+@keyframes rotation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes rotation-back {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(-360deg);
+	}
+}
+
 .module-item {
+	position: relative;
+	z-index: 3;
 	height: 100%;
-	border-image-source: url('@/assets/images/newForm.png');
+	padding-top: 20px;
+	background-color: var(--module-bg);
+	border-radius: 2vw;
+	border-image-source: url('@/assets/images/center.png');
 	border-image-slice: 50 50 50 50 fill;
 	border-image-width: 50px 50px 50px 50px;
+
+	h2 {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		padding: 0.1vw 2vw;
+		font-size: 18px;
+		font-weight: bold;
+		color: #ffffff;
+		text-align: center;
+		white-space: nowrap;
+		background-color: #0a54ea;
+		border-radius: 10px;
+		transform: translate(-50%, -35%);
+	}
 
 	.spinning {
 		height: 100%;
@@ -76,25 +124,5 @@ const loading = ref<boolean>(false);
 	width: 44px;
 	height: 44px;
 	border-color: transparent transparent #ffffff #ffffff;
-}
-
-@keyframes rotation {
-	0% {
-		transform: rotate(0deg);
-	}
-
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
-@keyframes rotation-back {
-	0% {
-		transform: rotate(0deg);
-	}
-
-	100% {
-		transform: rotate(-360deg);
-	}
 }
 </style>

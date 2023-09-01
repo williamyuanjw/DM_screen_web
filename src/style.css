@@ -4,6 +4,10 @@
 	scrollbar-width: thin;
 }
 
+:root {
+	--module-bg: rgb(4 32 103 / 50%);
+}
+
 html,
 body {
 	/* 300px */

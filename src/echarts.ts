@@ -5,7 +5,8 @@ import {
 	GridComponent,
 	LegendComponent,
 	VisualMapComponent,
-	TitleComponent
+	TitleComponent,
+	DataZoomComponent
 } from 'echarts/components';
 import { BarChart, LineChart } from 'echarts/charts';
 import { RadarChart } from 'echarts/charts';
@@ -20,6 +21,7 @@ echarts.use([
 	VisualMapComponent,
 	BarChart,
 	LineChart,
+	DataZoomComponent,
 	CanvasRenderer,
 	RadarChart,
 	UniversalTransition,

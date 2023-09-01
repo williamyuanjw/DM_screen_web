@@ -12,8 +12,8 @@
 								<ModuleItem> </ModuleItem>
 							</a-col>
 							<a-col class="chart-content-left-item" :span="24">
-								<ModuleItem>
-									<div :ref="openRankChart.container" class="open-rank-line"></div>
+								<ModuleItem title="OpenRank">
+									<div :ref="openRankChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
 						</a-row>
@@ -33,7 +33,10 @@
 					<a-col :span="7">
 						<a-row class="chart-content-right">
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem />
+								<ModuleItem title="审阅者效率">
+									<div :ref="reviewEfficient.container" class="chart-container" />
+								</ModuleItem>
+								<a-button @click="handleClick">点击</a-button>
 							</a-col>
 							<a-col class="chart-content-right-item" :span="24">
 								<ModuleItem />
@@ -47,7 +50,6 @@
 				<!-- 背景地球 -->
 				<earth-bg />
 			</div>
-			<!-- <header-first /> -->
 			<!-- <virtual-list
 				style="height: 200px"
 				:data-source="dataSource"
@@ -59,10 +61,10 @@
 					<div class="list-item" style="color: #ffffff">{{ item.id }} - {{ item.content }}</div>
 				</template>
 			</virtual-list> -->
-			<section></section>
-			<footer></footer>
 		</div>
 	</div>
+	<!-- 审阅者弹窗 -->
+	<chart-modal v-model:visible="chartModalData.visible" :type="chartModalData.type" />
 </template>
 
 <script setup lang="ts">
@@ -70,9 +72,15 @@ import { nextTick, onBeforeUnmount, onMounted } from 'vue';
 import { debounce } from 'lodash';
 import HomeHeader from './components/home-header/index.vue';
 import EarthBg from './components/earth-bg/index.vue';
+import ChartModal from './components/chart-modal/index.vue';
 // import VirtualList from '@/components/VirtualList/index.vue';
 import useOpenRank from './composables/use-open-rank';
+import useReviewEfficient from './composables/use-review-efficient';
+import useChartModal from './composables/use-chart-modal';
+
+const chartModalData = useChartModal();
 const openRankChart = useOpenRank();
+const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
 
 // const loading = ref(false);
 // const dataSource = ref<{ id: number; content: string }[]>([]);
@@ -96,11 +104,57 @@ const openRankChart = useOpenRank();
  */
 const chartResize = debounce(() => {
 	openRankChart.chart.resizeChart();
+	reviewEfficient.chart.resizeChart();
 }, 500);
+
+const handleClick = () => {
+	// reviewEfficient.chart.visible = true;
+	// (reviewEfficient.chart.lastSeries as any).push(
+	// 	{
+	// 		name: 'b',
+	// 		type: 'line',
+	// 		yAxisIndex: 1,
+	// 		color: '#ff6e76',
+	// 		tooltip: {
+	// 			valueFormatter: function (value) {
+	// 				return value + ' °C';
+	// 			}
+	// 		},
+	// 		data: [6, 9, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+	// 	},
+	// 	{
+	// 		name: 'b1',
+	// 		type: 'line',
+	// 		yAxisIndex: 1,
+	// 		color: '#ff6e76',
+	// 		tooltip: {
+	// 			valueFormatter: function (value) {
+	// 				return value + ' °C';
+	// 			}
+	// 		},
+	// 		data: [5, 17, 3.3, 20, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+	// 	},
+	// 	{
+	// 		name: 'b2',
+	// 		type: 'line',
+	// 		yAxisIndex: 1,
+	// 		color: '#ff6e76',
+	// 		tooltip: {
+	// 			valueFormatter: function (value) {
+	// 				return value + ' °C';
+	// 			}
+	// 		},
+	// 		data: [18, 16, 3.3, 16, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+	// 	}
+	// );
+	// const option = reviewEfficient.chart.getOption();
+	// reviewEfficient.chartRef.value?.setOption(option);
+};
 
 onMounted(() => {
 	nextTick(() => {
 		openRankChart.chart.initChart([]);
+		reviewEfficient.chart.initChart([]);
 	});
 	window.addEventListener('resize', chartResize);
 });
@@ -115,6 +169,14 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .tooltip-review {
+	.tooltip-value {
+		font-size: 15px;
+		font-weight: bold;
+		color: #666666;
+	}
+}
+
 .home {
 	position: relative;
 	width: 100%;
@@ -126,12 +188,20 @@ onBeforeUnmount(() => {
 		height: 100%;
 
 		.chart-content {
-			// height: 100%;
-			height: calc(100% - 65px);
+			height: calc(100% - 77px);
 
-			// overflow-y: scroll;
+			// position: relative;
+			// z-index: 2;
+			margin-top: 12px;
+
+			.chart-container {
+				width: 100%;
+				height: 100%;
+			}
+
 			&-left {
 				flex-direction: column;
+				row-gap: 8px !important;
 				height: 100%;
 
 				&-item:nth-child(1) {
@@ -141,15 +211,11 @@ onBeforeUnmount(() => {
 				&-item:nth-child(2) {
 					flex: 1;
 				}
-
-				.open-rank-line {
-					width: 100%;
-					height: 100%;
-				}
 			}
 
 			&-center {
 				flex-direction: column;
+				row-gap: 8px !important;
 				height: 100%;
 				border-radius: 27px;
 				border-image-source: url('@/assets/images/center.png');
@@ -167,6 +233,7 @@ onBeforeUnmount(() => {
 
 			&-right {
 				flex-direction: column;
+				row-gap: 8px !important;
 				height: 100%;
 
 				&-item {
@@ -177,13 +244,13 @@ onBeforeUnmount(() => {
 
 		@media (max-width: 600px) {
 			.chart-content {
-				height: calc(100% - 70px);
+				height: calc(100% - 82px);
 			}
 		}
 
 		@media (max-width: 450px) {
 			.chart-content {
-				height: calc(100% - 80px);
+				height: calc(100% - 92px);
 			}
 		}
 	}
