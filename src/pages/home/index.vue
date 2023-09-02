@@ -64,7 +64,11 @@
 		</div>
 	</div>
 	<!-- 审阅者弹窗 -->
-	<chart-modal v-model:visible="chartModalData.visible" :type="chartModalData.type" />
+	<chart-modal
+		v-model:visible="chartModalData.visible"
+		:type="chartModalData.type"
+		:defaultValue="chartModalData.selectValue"
+	/>
 </template>
 
 <script setup lang="ts">

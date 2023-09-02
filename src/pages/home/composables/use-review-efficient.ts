@@ -1,29 +1,36 @@
 import { ref, reactive, Ref, shallowRef } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption, EChartsOption } from 'echarts';
-import { EChartsType } from 'echarts/core';
+import { PieSeriesOption, EChartsOption, LineSeriesOption, BarSeriesOption } from 'echarts';
+import { EChartsType, EChartsCoreOption } from 'echarts/core';
+import type { MuSelectValueType } from '../data';
 
 import { getHtmlFontPX, handleChartResize } from '@/utils/base';
 import ThemeColor from '@/themeColor';
 import { colorList } from '../config';
-// import ThemeColor from '@/themeColor';
+type MixLineBarType = LineSeriesOption | (BarSeriesOption & { symbol?: string; smooth?: boolean; symbolSize?: number });
+
+// 定义折柱混合图的配置接口
 
 export type LineChartType = {
 	chart: {
+		selectValue: MuSelectValueType;
 		initChart(nodes: PieSeriesOption['data']): void;
 		resizeChart(): void;
-		lastSeries: EChartsOption['series']; // 存储上一次添加或删除的数据 用于恢复折线柱状混合图
-		extraOption: EChartsOption; // 额外的配置（例如打开详情弹窗的新配置）
+		lastSeries: MixLineBarType[]; // 存储上一次添加或删除的数据 用于恢复折线柱状混合图
+		extraOption: EChartsCoreOption; // 额外的配置（例如打开详情弹窗的新配置）
 	};
 	container: Ref<HTMLDivElement | undefined>;
 	chartRef: Ref<EChartsType | undefined>;
-	getOption(): EChartsOption;
+	getOption(): EChartsCoreOption;
 };
 
-export default function (showHandler?: (visible: boolean, type: number) => void): LineChartType {
+export default function (
+	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void
+): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<LineChartType['chart']>({
+		selectValue: [],
 		initChart,
 		resizeChart,
 		extraOption: {},
@@ -31,7 +38,7 @@ export default function (showHandler?: (visible: boolean, type: number) => void)
 			{
 				name: 'issue respose',
 				type: 'bar',
-				symbol: 'circle', // 折柱混合导致类型报错先不管
+				symbol: 'circle',
 				smooth: true,
 				symbolSize: 8,
 				tooltip: {
@@ -195,7 +202,7 @@ export default function (showHandler?: (visible: boolean, type: number) => void)
 									// 移动端要取消默认行为不然弹窗会立刻关闭
 									// 阻止touchend后的click事件发生
 									e.event.preventDefault();
-									showHandler && showHandler(true, 1);
+									showHandler && showHandler(true, 1, chart.selectValue);
 								}
 						  }
 				}
