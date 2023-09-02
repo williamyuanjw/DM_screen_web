@@ -1,5 +1,5 @@
 <template>
-	<div class="fs-estimated-virtuallist-container" v-loading="props.loading">
+	<div class="fs-estimated-virtuallist-container">
 		<div class="fs-estimated-virtuallist-content" ref="contentRef">
 			<div class="fs-estimated-virtuallist-list" ref="listRef" :style="scrollStyle">
 				<div class="fs-estimated-virtuallist-list-item" v-for="i in renderList" :key="i.id" :id="String(i.id)">
@@ -20,7 +20,6 @@
 import { type CSSProperties, computed, nextTick, onMounted, onUnmounted, reactive, ref, watch, PropType } from 'vue';
 import type { IPosInfo, VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
-
 const props = defineProps({
 	loading: {
 		type: Boolean,
@@ -36,7 +35,7 @@ const props = defineProps({
 	}
 });
 
-const emit = defineEmits(['scroll-end']);
+// const emit = defineEmits(['scroll-end']);
 
 const contentRef = ref<HTMLDivElement>();
 
@@ -156,10 +155,12 @@ const move = () => {
 	}
 	if (contentRef.value) {
 		if (positions.value.length && contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom) {
+			console.log(contentRef.value.scrollTop);
 			contentRef.value.scrollTop = 0;
-			!props.loading && emit('scroll-end');
+			// !props.loading && emit('scroll-end');
 			console.log('bottom');
 		} else {
+			console.log(contentRef.value.scrollTop, positions.value[positions.value.length - 1].bottom);
 			contentRef.value.scrollTop += 1;
 		}
 	}
@@ -226,13 +227,14 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .fs-estimated-virtuallist {
-
 	&-container {
+		position: relative;
 		width: 100%;
 		height: 100%;
 	}
 
 	&-content {
+		position: absolute;
 		width: 100%;
 		height: 100%;
 		overflow: auto;

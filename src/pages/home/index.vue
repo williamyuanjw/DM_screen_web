@@ -9,7 +9,19 @@
 					<a-col :span="7">
 						<a-row class="chart-content-left">
 							<a-col class="chart-content-left-item" :span="24">
-								<ModuleItem> </ModuleItem>
+								<ModuleItem title="Github指数">
+									<list-header :titleList="['项目名', '影响力', '发展趋势', '社区反应', '开发活跃度', 'Github指数']" />
+									<!-- <virtual-list
+										:data-source="dataSource"
+										:loading="loading"
+										:estimated-height="10"
+										@scroll-end="addData"
+									>
+										<template #item="{ item }">
+											<div class="list-item" style="color: #ffffff">{{ item.id }} - {{ item.content }}</div>
+										</template>
+									</virtual-list> -->
+								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-left-item" :span="24">
 								<ModuleItem title="OpenRank">
@@ -50,17 +62,6 @@
 				<!-- 背景地球 -->
 				<earth-bg />
 			</div>
-			<!-- <virtual-list
-				style="height: 200px"
-				:data-source="dataSource"
-				:loading="loading"
-				:estimated-height="10"
-				@scroll-end="addData"
-			>
-				<template #item="{ item }">
-					<div class="list-item" style="color: #ffffff">{{ item.id }} - {{ item.content }}</div>
-				</template>
-			</virtual-list> -->
 		</div>
 	</div>
 	<!-- 审阅者弹窗 -->
@@ -72,12 +73,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { debounce } from 'lodash';
 import HomeHeader from './components/home-header/index.vue';
 import EarthBg from './components/earth-bg/index.vue';
 import ChartModal from './components/chart-modal/index.vue';
-// import VirtualList from '@/components/VirtualList/index.vue';
+import ListHeader from './components/list-header/index.vue';
+
 import useOpenRank from './composables/use-open-rank';
 import useReviewEfficient from './composables/use-review-efficient';
 import useChartModal from './composables/use-chart-modal';
@@ -86,23 +88,23 @@ const chartModalData = useChartModal();
 const openRankChart = useOpenRank();
 const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
 
-// const loading = ref(false);
-// const dataSource = ref<{ id: number; content: string }[]>([]);
-// const addData = () => {
-// 	loading.value = true;
-// 	setTimeout(() => {
-// 		const newData = [];
-// 		for (let i = 0; i < 20; i++) {
-// 			const len: number = dataSource.value.length + newData.length;
-// 			newData.push({
-// 				id: len,
-// 				content: 'test' // 内容
-// 			});
-// 		}
-// 		dataSource.value = [...dataSource.value, ...newData];
-// 		loading.value = false;
-// 	}, 2000);
-// };
+const loading = ref(false);
+const dataSource = ref<{ id: number; content: string }[]>([]);
+const addData = () => {
+	loading.value = true;
+	setTimeout(() => {
+		const newData = [];
+		for (let i = 0; i < 20; i++) {
+			const len: number = dataSource.value.length + newData.length;
+			newData.push({
+				id: len,
+				content: 'test' // 内容
+			});
+		}
+		dataSource.value = [...dataSource.value, ...newData];
+		loading.value = false;
+	}, 2000);
+};
 /**
  * @description 处理全部图表的缩放
  */
@@ -156,6 +158,7 @@ const handleClick = () => {
 };
 
 onMounted(() => {
+	addData();
 	nextTick(() => {
 		openRankChart.chart.initChart([]);
 		reviewEfficient.chart.initChart([]);
@@ -166,10 +169,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	window.removeEventListener('resize', chartResize);
 });
-
-// onMounted(() => {
-// 	addData();
-// });
 </script>
 
 <style lang="scss" scoped>
