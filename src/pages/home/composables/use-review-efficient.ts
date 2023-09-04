@@ -1,28 +1,12 @@
-import { ref, reactive, Ref, shallowRef } from 'vue';
+import { ref, reactive, shallowRef } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption, EChartsOption, LineSeriesOption, BarSeriesOption } from 'echarts';
-import { EChartsType, EChartsCoreOption } from 'echarts/core';
-import type { MuSelectValueType } from '../data';
+import { PieSeriesOption, EChartsOption } from 'echarts';
+import { EChartsType } from 'echarts/core';
+import type { LineChartType, MuSelectValueType } from '../data';
 
 import { getHtmlFontPX, handleChartResize } from '@/utils/base';
 import ThemeColor from '@/themeColor';
 import { colorList } from '../config';
-type MixLineBarType = LineSeriesOption | (BarSeriesOption & { symbol?: string; smooth?: boolean; symbolSize?: number });
-
-// 定义折柱混合图的配置接口
-
-export type LineChartType = {
-	chart: {
-		selectValue: MuSelectValueType;
-		initChart(nodes: PieSeriesOption['data']): void;
-		resizeChart(): void;
-		lastSeries: MixLineBarType[]; // 存储上一次添加或删除的数据 用于恢复折线柱状混合图
-		extraOption: EChartsCoreOption; // 额外的配置（例如打开详情弹窗的新配置）
-	};
-	container: Ref<HTMLDivElement | undefined>;
-	chartRef: Ref<EChartsType | undefined>;
-	getOption(): EChartsCoreOption;
-};
 
 export default function (
 	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void
@@ -46,7 +30,6 @@ export default function (
 						return value + ' ml';
 					}
 				},
-
 				data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
 			},
 			{

@@ -17,11 +17,12 @@ defineProps({
 <style lang="scss" scoped>
 .list-header {
 	display: flex;
+	gap: 8px;
 	align-items: center;
-	justify-content: space-around;
-	margin-top: 8px;
+	padding-top: 8px;
 
 	.list-header-title {
+		flex: 1;
 		overflow: hidden;
 		font-size: 16px;
 		color: #558dfd;

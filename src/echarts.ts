@@ -8,7 +8,7 @@ import {
 	TitleComponent,
 	DataZoomComponent
 } from 'echarts/components';
-import { BarChart, LineChart } from 'echarts/charts';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
 import { RadarChart } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -25,6 +25,7 @@ echarts.use([
 	CanvasRenderer,
 	RadarChart,
 	UniversalTransition,
+	PieChart,
 	TitleComponent
 ]);
 

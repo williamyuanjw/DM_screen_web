@@ -11,7 +11,7 @@
 		>
 			<div class="chart-modal-content">
 				<div class="chart-modal-first">
-					<a-select
+					<multiple-select
 						class="chart-modal-select"
 						dropdownClassName="chart-select-drop"
 						v-model:value="selectValue"
@@ -20,9 +20,9 @@
 						placeholder="请选择"
 						:options="[...Array(25)].map((_, i) => ({ value: (i + 10).toString(36) + (i + 1) }))"
 						@change="handleChange"
-					></a-select>
+					/>
 				</div>
-				<div v-if="type === 1" :ref="reviewEfficient.container" class="chart-container" />
+				<div :ref="chartDataObj[props.type].container" class="chart-container" />
 			</div>
 		</a-modal>
 	</div>
@@ -32,10 +32,13 @@
 import { computed, watch, nextTick, PropType, ref } from 'vue';
 import { debounce } from 'lodash';
 
-import useReviewEfficient, { LineChartType } from '../../composables/use-review-efficient';
-import { MuSelectValueType } from '../../data';
+import { MuSelectValueType, chartDataObjType } from '../../data';
+
+import useReviewEfficient from '../../composables/use-review-efficient';
+import useOpenRank from '../../composables/use-open-rank';
 
 const reviewEfficient = useReviewEfficient();
+const openRankChart = useOpenRank();
 
 const props = defineProps({
 	visible: {
@@ -80,12 +83,26 @@ const handleChange = (value: any) => {
 
 const chartResize = debounce(() => {
 	reviewEfficient.chart.resizeChart();
+	openRankChart.chart.resizeChart();
 }, 500);
 
+const chartDataObj: chartDataObjType = {
+	1: {
+		title: 'Reviewer efficiency',
+		data: reviewEfficient,
+		container: reviewEfficient.container
+	},
+	2: {
+		title: 'OpenRank',
+		data: openRankChart,
+		container: openRankChart.container
+	}
+};
+
 const initChartOptions = () => {
-	reviewEfficient.chart.extraOption = {
+	chartDataObj[props.type].data.chart.extraOption = {
 		title: {
-			text: 'Reviewer efficiency',
+			text: chartDataObj[props.type].title,
 			textStyle: {
 				color: '#ffeb7b',
 				fontSize: '1.125rem'
@@ -109,10 +126,6 @@ const initChartOptions = () => {
 	};
 };
 
-const chartDataObj: Record<string, LineChartType> = {
-	1: reviewEfficient
-};
-
 watch(
 	() => props.visible,
 	value => {
@@ -120,12 +133,12 @@ watch(
 			nextTick(() => {
 				console.log(props.type);
 				initChartOptions();
-				chartDataObj[props.type].chart.initChart([]);
+				chartDataObj[props.type].data.chart.initChart([]);
 			});
 			window.addEventListener('resize', chartResize);
 		} else {
 			selectValue.value && (selectValue.value.length = 0);
-			chartDataObj[props.type].chartRef.value?.clear();
+			chartDataObj[props.type].data.chartRef.value?.clear();
 			window.removeEventListener('resize', chartResize);
 		}
 	}

@@ -1,6 +1,13 @@
 <template>
 	<div class="fs-estimated-virtuallist-container">
-		<div class="fs-estimated-virtuallist-content" ref="contentRef">
+		<div
+			class="fs-estimated-virtuallist-content"
+			ref="contentRef"
+			@mouseleave="leave"
+			@mouseenter="enter"
+			@mouseover="over"
+			@scroll="scroll"
+		>
 			<div class="fs-estimated-virtuallist-list" ref="listRef" :style="scrollStyle">
 				<div class="fs-estimated-virtuallist-list-item" v-for="i in renderList" :key="i.id" :id="String(i.id)">
 					<slot name="item" :item="i"></slot>
@@ -50,7 +57,8 @@ const state = reactive<VirtualStateType>({
 	maxCount: 0,
 	preLen: 0,
 	virList: [],
-	rafTimer: null
+	rafTimer: null,
+	isHover: false
 });
 
 const endIndex = computed(() => Math.min(props.dataSource.length, state.startIndex + state.maxCount));
@@ -148,23 +156,52 @@ const setPosition = () => {
  * @description 播放滚动
  */
 const move = () => {
+	if (state.isHover) return;
 	// 加载中就停止
 	if (props.loading) {
-		state.rafTimer && cancelAnimationFrame(state.rafTimer);
+		_cancel();
 		return;
 	}
 	if (contentRef.value) {
 		if (positions.value.length && contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom) {
-			console.log(contentRef.value.scrollTop);
 			contentRef.value.scrollTop = 0;
 			// !props.loading && emit('scroll-end');
 			console.log('bottom');
 		} else {
-			console.log(contentRef.value.scrollTop, positions.value[positions.value.length - 1].bottom);
+			// console.log(contentRef.value.scrollTop, positions.value[positions.value.length - 1].bottom);
 			contentRef.value.scrollTop += 1;
 		}
 	}
 	state.rafTimer = delayRef(move);
+};
+
+const _cancel = () => {
+	state.rafTimer !== null && window.cancelAnimationFrame(state.rafTimer);
+};
+
+const enter = () => {
+	state.isHover = true; //关闭_move
+	_cancel();
+};
+const leave = () => {
+	state.isHover = false; //开启_move
+	move();
+};
+
+const over = () => {
+	_cancel();
+};
+
+const scroll = () => {
+	if (
+		contentRef.value &&
+		positions.value.length &&
+		contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom
+	) {
+		contentRef.value.scrollTop = 0;
+		// !props.loading && emit('scroll-end');
+		console.log('bottoms');
+	}
 };
 
 const init = () => {
@@ -226,6 +263,12 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+// 隐藏滚动条
+::-webkit-scrollbar {
+	display: none;
+	background-color: transparent;
+}
+
 .fs-estimated-virtuallist {
 	&-container {
 		position: relative;

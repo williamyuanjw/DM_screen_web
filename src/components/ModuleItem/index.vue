@@ -1,6 +1,6 @@
 <template>
 	<div class="module-item">
-		<h2>{{ title }}</h2>
+		<h2 v-if="title">{{ title }}</h2>
 		<a-spin wrapperClassName="spinning" :spinning="loading">
 			<slot />
 			<template #indicator>
@@ -11,16 +11,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
 defineProps({
 	title: {
 		type: String,
-		default: '标题'
+		default: ''
+	},
+	loading: {
+		type: Boolean,
+		default: false
 	}
 });
-
-const loading = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
