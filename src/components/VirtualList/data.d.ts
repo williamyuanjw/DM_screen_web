@@ -26,4 +26,5 @@ export interface VirtualStateType {
 	maxCount: number;
 	preLen: number;
 	virList: Record<string, any>[]; // 无缝滚动所需数组
+	isHover: boolean;
 }

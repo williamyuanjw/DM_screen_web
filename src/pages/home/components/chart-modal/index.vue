@@ -10,27 +10,35 @@
 			:footer="null"
 		>
 			<div class="chart-modal-content">
-				<div>
-					<!-- <a-select
-						v-model:value="value"
+				<div class="chart-modal-first">
+					<multiple-select
+						class="chart-modal-select"
+						dropdownClassName="chart-select-drop"
+						v-model:value="selectValue"
 						mode="multiple"
-						style="width: 100%"
-						placeholder="Please select"
+						style="width: 40%"
+						placeholder="请选择"
 						:options="[...Array(25)].map((_, i) => ({ value: (i + 10).toString(36) + (i + 1) }))"
 						@change="handleChange"
-					></a-select> -->
+					/>
 				</div>
-				<div v-if="type === 1" :ref="reviewEfficient.container" class="chart-container" />
+				<div :ref="chartDataObj[props.type].container" class="chart-container" />
 			</div>
 		</a-modal>
 	</div>
 </template>
 
 <script setup lang="ts">
+import { computed, watch, nextTick, PropType, ref } from 'vue';
 import { debounce } from 'lodash';
-import useReviewEfficient, { LineChartType } from '../../composables/use-review-efficient';
-import { computed, watch, nextTick } from 'vue';
+
+import { MuSelectValueType, chartDataObjType } from '../../data';
+
+import useReviewEfficient from '../../composables/use-review-efficient';
+import useOpenRank from '../../composables/use-open-rank';
+
 const reviewEfficient = useReviewEfficient();
+const openRankChart = useOpenRank();
 
 const props = defineProps({
 	visible: {
@@ -39,6 +47,10 @@ const props = defineProps({
 	},
 	type: {
 		type: Number,
+		required: true
+	},
+	defaultValue: {
+		type: Object as PropType<MuSelectValueType>,
 		required: true
 	}
 });
@@ -54,6 +66,8 @@ const isShow = computed({
 	}
 });
 
+const selectValue = ref<MuSelectValueType>([]);
+
 function cancel() {
 	console.log('cancel');
 	// isShow.value = false;
@@ -63,14 +77,32 @@ function submit() {
 	cancel();
 }
 
+const handleChange = (value: any) => {
+	console.log(value, selectValue.value, 'change');
+};
+
 const chartResize = debounce(() => {
 	reviewEfficient.chart.resizeChart();
+	openRankChart.chart.resizeChart();
 }, 500);
 
+const chartDataObj: chartDataObjType = {
+	1: {
+		title: 'Reviewer efficiency',
+		data: reviewEfficient,
+		container: reviewEfficient.container
+	},
+	2: {
+		title: 'OpenRank',
+		data: openRankChart,
+		container: openRankChart.container
+	}
+};
+
 const initChartOptions = () => {
-	reviewEfficient.chart.extraOption = {
+	chartDataObj[props.type].data.chart.extraOption = {
 		title: {
-			text: 'Reviewer efficiency',
+			text: chartDataObj[props.type].title,
 			textStyle: {
 				color: '#ffeb7b',
 				fontSize: '1.125rem'
@@ -94,10 +126,6 @@ const initChartOptions = () => {
 	};
 };
 
-const chartDataObj: Record<string, LineChartType> = {
-	1: reviewEfficient
-};
-
 watch(
 	() => props.visible,
 	value => {
@@ -105,26 +133,63 @@ watch(
 			nextTick(() => {
 				console.log(props.type);
 				initChartOptions();
-				chartDataObj[props.type].chart.initChart([]);
+				chartDataObj[props.type].data.chart.initChart([]);
 			});
 			window.addEventListener('resize', chartResize);
 		} else {
-			chartDataObj[props.type].chartRef.value?.clear();
+			selectValue.value && (selectValue.value.length = 0);
+			chartDataObj[props.type].data.chartRef.value?.clear();
 			window.removeEventListener('resize', chartResize);
 		}
+	}
+);
+
+watch(
+	() => props.defaultValue,
+	value => {
+		selectValue.value = value;
 	}
 );
 </script>
 
 <style lang="scss" scoped>
 .chart-modal-content {
-	height: 400px;
+	display: flex;
+	flex-direction: column;
+	height: 500px;
 	margin-top: 25px;
+	overflow: hidden;
 	color: #ffffff;
 
 	.chart-container {
-		width: 100%;
-		height: 100%;
+		flex: 1;
+	}
+
+	.chart-modal-first {
+		margin: 16px 0;
+	}
+
+	.chart-modal-select {
+		::v-deep .ant-select-selector {
+			background-color: #3a59a4;
+			border-color: #8190b8;
+
+			.ant-select-selection-item {
+				color: rgb(255 255 255 / 80%);
+				background-color: #4992ff;
+				border-color: rgb(255 255 255 / 80%);
+			}
+
+			.ant-select-selection-item-remove {
+				color: rgb(255 255 255 / 80%);
+			}
+		}
+
+		&:hover {
+			::v-deep .ant-select-selector {
+				border-color: #4992ff;
+			}
+		}
 	}
 }
 </style>
@@ -144,6 +209,27 @@ watch(
 
 	.ant-modal-close {
 		color: #ffffff;
+	}
+}
+
+.chart-select-drop {
+	color: rgb(255 255 255 / 60%);
+	background-color: #3a59a4;
+
+	.ant-select-item {
+		color: rgb(255 255 255 / 60%);
+	}
+
+	.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+		background-color: #4992ff;
+	}
+
+	.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+		background-color: #6585d2;
+	}
+
+	.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state {
+		color: rgb(255 255 255 / 60%);
 	}
 }
 </style>
