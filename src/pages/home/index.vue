@@ -254,12 +254,10 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(1) {
 					flex: 2;
-					height: 66.6%;
 				}
 
 				&-item:nth-child(2) {
 					flex: 1;
-					height: 33.3%;
 				}
 			}
 
@@ -270,7 +268,6 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(1) {
 					flex: 2;
-					height: 66.6%;
 
 					.index-data {
 						display: flex;
@@ -282,7 +279,6 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(2) {
 					flex: 1;
-					height: 33.3%;
 				}
 			}
 
@@ -293,7 +289,6 @@ onBeforeUnmount(() => {
 
 				&-item {
 					flex: 1;
-					height: 33.3%;
 				}
 			}
 		}
@@ -312,4 +307,3 @@ onBeforeUnmount(() => {
 	}
 }
 </style>
-./composables/use-radar
