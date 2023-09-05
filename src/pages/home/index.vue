@@ -6,7 +6,7 @@
 				<!-- 整体布局 左 中 右 -->
 				<a-row :gutter="[8, 8]" style="height: 100%">
 					<!-- 左侧 -->
-					<a-col :span="7">
+					<a-col :span="7" style="height: 100%">
 						<a-row class="chart-content-left">
 							<a-col class="chart-content-left-item" :span="24">
 								<ModuleItem title="Github指数" :loading="github.loading">
@@ -43,7 +43,7 @@
 						</a-row>
 					</a-col>
 					<!-- 中间 -->
-					<a-col :span="10">
+					<a-col :span="10" style="height: 100%">
 						<a-row class="chart-content-center">
 							<a-col class="chart-content-center-item" :span="24">
 								<ModuleItem>
@@ -61,7 +61,7 @@
 						</a-row>
 					</a-col>
 					<!-- 右侧 -->
-					<a-col :span="7">
+					<a-col :span="7" style="height: 100%">
 						<a-row class="chart-content-right">
 							<a-col class="chart-content-right-item" :span="24">
 								<ModuleItem title="审阅者效率">
@@ -69,14 +69,14 @@
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="开发者活跃度"
-									><div :ref="deverChart.container" class="chart-container"></div
-								></ModuleItem>
+								<ModuleItem title="开发者活跃度">
+									<div :ref="deverChart.container" class="chart-container"></div>
+								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="项目活跃度"
-									><div :ref="projectChart.container" class="chart-container"></div
-								></ModuleItem>
+								<ModuleItem title="项目活跃度">
+									<div :ref="projectChart.container" class="chart-container"></div>
+								</ModuleItem>
 							</a-col>
 						</a-row>
 					</a-col>
@@ -254,10 +254,12 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(1) {
 					flex: 2;
+					height: 66.6%;
 				}
 
 				&-item:nth-child(2) {
 					flex: 1;
+					height: 33.3%;
 				}
 			}
 
@@ -268,6 +270,7 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(1) {
 					flex: 2;
+					height: 66.6%;
 
 					.index-data {
 						display: flex;
@@ -279,6 +282,7 @@ onBeforeUnmount(() => {
 
 				&-item:nth-child(2) {
 					flex: 1;
+					height: 33.3%;
 				}
 			}
 
@@ -289,6 +293,7 @@ onBeforeUnmount(() => {
 
 				&-item {
 					flex: 1;
+					height: 33.3%;
 				}
 			}
 		}
