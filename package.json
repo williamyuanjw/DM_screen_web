@@ -15,13 +15,16 @@
 	"dependencies": {
 		"@types/lodash-es": "^4.17.7",
 		"@types/node": "^18.16.2",
+		"@types/qs": "^6.9.8",
 		"ant-design-vue": "^3.2.20",
 		"axios": "^1.4.0",
 		"dayjs": "^1.11.7",
 		"echarts": "^5.4.2",
 		"lodash": "^4.17.21",
+		"pinia": "^2.1.6",
 		"postcss-pxtorem": "^6.0.0",
-		"vue": "^3.2.47",
+		"qs": "^6.11.2",
+		"vue": "^3.3.4",
 		"vue-router": "^4.1.6"
 	},
 	"devDependencies": {

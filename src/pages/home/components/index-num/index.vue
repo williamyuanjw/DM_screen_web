@@ -1,18 +1,29 @@
 <template>
 	<div class="index-num">
 		<a-row class="index-row-value">
-			<a-col class="index-col">125811</a-col>
+			<a-col class="index-col">{{ initData.openRank }}</a-col>
 			<a-divider type="vertical" class="index-divider" />
-			<a-col class="index-col">104563</a-col>
+			<a-col class="index-col">{{ initData.gitHub }}</a-col>
 		</a-row>
 		<a-row class="index-row-label">
-			<a-col class="index-col">OpenRank</a-col>
-			<a-col class="index-col">GitHub</a-col>
+			<a-col class="index-col">OpenRank平均值</a-col>
+			<a-col class="index-col">GitHub平均值</a-col>
 		</a-row>
 	</div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { PropType, onMounted } from 'vue';
+
+defineProps({
+	initData: {
+		type: Object as PropType<{ openRank: string | number; gitHub: string | number }>,
+		default: () => ({ openRank: 0, gitHub: 0 })
+	}
+});
+
+onMounted(() => {});
+</script>
 
 <style lang="scss" scoped>
 @font-face {

@@ -1,5 +1,7 @@
 <template>
 	<div class="home">
+		<transition-loading :isShow="loadShow" />
+
 		<div class="chart-list">
 			<home-header />
 			<div style="padding: 0 8px" class="chart-content">
@@ -11,25 +13,28 @@
 							<a-col class="chart-content-left-item" :span="24">
 								<ModuleItem title="Github指数" :loading="github.loading">
 									<div class="virtual-list-content">
-										<list-header
-											:titleList="['项目名', '影响力', '发展趋势', '社区反应', '开发活跃度', 'Github指数']"
-										/>
+										<list-header :titleList="titleList" />
 										<virtual-list
 											:data-source="github.dataSource"
 											:loading="github.loading"
-											:estimated-height="10"
+											:estimated-height="15"
 											@scroll-end="github.addData"
 											class="virtual-list"
 										>
 											<template #item="{ item }">
-												<div class="virtual-list-item">
-													<span class="virtual-list-item-col">{{ item.content }}</span>
-													<span class="virtual-list-item-col">{{ item.id }}</span>
-													<span class="virtual-list-item-col">{{ item.id }}</span>
-													<span class="virtual-list-item-col">{{ item.id }}</span>
-													<span class="virtual-list-item-col">{{ item.id }}</span>
-													<span class="virtual-list-item-col">{{ item.id }}</span>
-												</div>
+												<a-tooltip placement="top" color="rgba(73, 146, 255, 0.8)">
+													<template #title>
+														<span>项目名：{{ item.name }}</span>
+													</template>
+													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item.project_id)">
+														<span class="virtual-list-item-col">{{ item.name }}</span>
+														<span class="virtual-list-item-col">{{ item.influence }}</span>
+														<span class="virtual-list-item-col">{{ item.trend }}</span>
+														<span class="virtual-list-item-col">{{ item.response }}</span>
+														<span class="virtual-list-item-col">{{ item.activity }}</span>
+														<span class="virtual-list-item-col">{{ item.github }}</span>
+													</div>
+												</a-tooltip>
 											</template>
 										</virtual-list>
 									</div>
@@ -48,7 +53,7 @@
 							<a-col class="chart-content-center-item" :span="24">
 								<ModuleItem>
 									<div class="index-data">
-										<index-num />
+										<index-num :initData="initData" />
 										<radar-list :radarFirst="radarFirst" />
 									</div>
 								</ModuleItem>
@@ -64,7 +69,7 @@
 					<a-col :span="7" style="height: 100%">
 						<a-row class="chart-content-right">
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="审阅者效率">
+								<ModuleItem title="PR处理效率">
 									<div :ref="reviewEfficient.container" class="chart-container" />
 								</ModuleItem>
 							</a-col>
@@ -86,7 +91,7 @@
 			</div>
 		</div>
 	</div>
-	<!-- 审阅者弹窗 -->
+	<!-- 弹窗 -->
 	<chart-modal
 		v-model:visible="chartModalData.visible"
 		:type="chartModalData.type"
@@ -95,8 +100,16 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { debounce } from 'lodash';
+
+import indexImg from '@/assets/images/index-bg.png';
+import centerImg from '@/assets/images/center.png';
+import headerImg from '@/assets/images/home-header.png';
+import mapImg from '@/assets/images/map.png';
+import lbxImg from '@/assets/images/lbx.png';
+import jtImg from '@/assets/images/jt.png';
+
 import HomeHeader from './components/home-header/index.vue';
 import EarthBg from './components/earth-bg/index.vue';
 import ChartModal from './components/chart-modal/index.vue';
@@ -110,14 +123,24 @@ import useChartModal from './composables/use-chart-modal';
 import useGithub from './composables/use-github';
 import useRadar from './composables/use-radar';
 
+import useOptionStore from '@/store/option';
+import useInitData from '@/store/initData';
+
+import { titleList } from './config';
+
+import { getInit, getOptions } from './service';
+
 const chartModalData = useChartModal();
-const openRankChart = useOpenRank(chartModalData.changeVisible);
-const deverChart = useOpenRank(chartModalData.changeVisible);
-const attentChart = useOpenRank(chartModalData.changeVisible);
-const projectChart = useOpenRank(chartModalData.changeVisible);
+const openRankChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 2 });
+const deverChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 3 });
+const attentChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 4 });
+const projectChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 5 });
 const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
 const github = useGithub();
 const radarFirst = useRadar();
+
+const optionStore = useOptionStore();
+const initDataStore = useInitData();
 
 /**
  * @description 处理全部图表的缩放
@@ -131,60 +154,61 @@ const chartResize = debounce(() => {
 	projectChart.chart.resizeChart();
 }, 500);
 
-// const handleClick = () => {
-// 	// reviewEfficient.chart.visible = true;
-// 	// (reviewEfficient.chart.lastSeries as any).push(
-// 	// 	{
-// 	// 		name: 'b',
-// 	// 		type: 'line',
-// 	// 		yAxisIndex: 1,
-// 	// 		color: '#ff6e76',
-// 	// 		tooltip: {
-// 	// 			valueFormatter: function (value) {
-// 	// 				return value + ' °C';
-// 	// 			}
-// 	// 		},
-// 	// 		data: [6, 9, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-// 	// 	},
-// 	// 	{
-// 	// 		name: 'b1',
-// 	// 		type: 'line',
-// 	// 		yAxisIndex: 1,
-// 	// 		color: '#ff6e76',
-// 	// 		tooltip: {
-// 	// 			valueFormatter: function (value) {
-// 	// 				return value + ' °C';
-// 	// 			}
-// 	// 		},
-// 	// 		data: [5, 17, 3.3, 20, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-// 	// 	},
-// 	// 	{
-// 	// 		name: 'b2',
-// 	// 		type: 'line',
-// 	// 		yAxisIndex: 1,
-// 	// 		color: '#ff6e76',
-// 	// 		tooltip: {
-// 	// 			valueFormatter: function (value) {
-// 	// 				return value + ' °C';
-// 	// 			}
-// 	// 		},
-// 	// 		data: [18, 16, 3.3, 16, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-// 	// 	}
-// 	// );
-// 	// const option = reviewEfficient.chart.getOption();
-// 	// reviewEfficient.chartRef.value?.setOption(option);
-// };
+const loadShow = ref<boolean>(true);
+const imgCount = 6;
+let curCount = 0;
+const addImgCount = () => {
+	curCount++;
+	if (curCount === imgCount) {
+		loadShow.value = false;
+	}
+};
+
+const loadImg = () => {
+	const imgArr = [indexImg, centerImg, headerImg, mapImg, lbxImg, jtImg];
+	imgArr.forEach(item => {
+		const newImage = new Image();
+		newImage.src = item;
+		newImage.onload = () => {
+			addImgCount();
+		};
+	});
+};
+
+const getOptionsData = async () => {
+	const res = await getOptions();
+	if (res.code === 200) {
+		optionStore.option = res.data || [];
+	}
+};
+
+const initData = reactive({
+	openRank: 0,
+	gitHub: 0
+});
+
+const getInitData = async () => {
+	const res = await getInit();
+	if (res.code === 200) {
+		nextTick(() => {
+			initDataStore.list = res.data.list || [];
+			openRankChart.chart.initChart(res.data.list, 'openrank');
+			deverChart.chart.initChart(res.data.list, 'developer_activity');
+			attentChart.chart.initChart(res.data.list, 'project_attention');
+			projectChart.chart.initChart(res.data.list, 'project_activity');
+			reviewEfficient.chart.initChart(res.data.list);
+			radarFirst.chart.initChart(res.data.list);
+		});
+		initData.openRank = res.data.other.githubAverage;
+		initData.gitHub = res.data.other.openrankAverage;
+	}
+};
 
 onMounted(() => {
+	loadImg();
+	getOptionsData();
+	getInitData();
 	github.addData();
-	nextTick(() => {
-		openRankChart.chart.initChart([]);
-		reviewEfficient.chart.initChart([]);
-		radarFirst.chart.initChart([]);
-		deverChart.chart.initChart([]);
-		attentChart.chart.initChart([]);
-		projectChart.chart.initChart([]);
-	});
 	window.addEventListener('resize', chartResize);
 });
 
@@ -194,14 +218,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .tooltip-review {
-	.tooltip-value {
-		font-size: 15px;
-		font-weight: bold;
-		color: #666666;
-	}
-}
-
 .home {
 	position: relative;
 	width: 100%;
@@ -231,7 +247,7 @@ onBeforeUnmount(() => {
 					display: flex;
 					gap: 8px;
 					align-items: center;
-					padding: 4px 0;
+					padding: 4px;
 					color: rgb(255 255 255);
 					cursor: pointer;
 
@@ -241,8 +257,16 @@ onBeforeUnmount(() => {
 					}
 
 					&-col {
-						width: 16.7%;
+						width: 16%;
+						overflow: hidden;
 						text-align: center;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					&-col:nth-child(1) {
+						width: 19.5%;
+						text-align: left;
 					}
 				}
 			}
@@ -304,6 +328,40 @@ onBeforeUnmount(() => {
 				height: calc(100% - 92px);
 			}
 		}
+	}
+}
+</style>
+
+<style lang="scss">
+.tooltip-review {
+	.tooltip-title {
+		width: 180px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.tooltip-item {
+		display: flex;
+		align-items: center;
+	}
+
+	.tooltip-label {
+		width: 120px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.tooltip-icon {
+		width: 6px;
+		height: 6px;
+		margin-right: 5px;
+		border-radius: 50%;
+	}
+
+	.tooltip-value {
+		font-size: 15px;
+		font-weight: bold;
+		color: #666666;
 	}
 }
 </style>

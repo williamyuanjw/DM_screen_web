@@ -1,22 +1,34 @@
 import { ref, reactive, shallowRef } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption, EChartsOption } from 'echarts';
+import { PieSeriesOption, EChartsOption, RadarSeriesOption } from 'echarts';
 import { EChartsType } from 'echarts/core';
 import type { RadarChartType } from '../data';
 
 import { getHtmlFontPX, handleChartResize } from '@/utils/base';
 import { colorList } from '../config';
 import ThemeColor from '@/themeColor';
+import useGithubStore from '@/store/github';
+import { message } from 'ant-design-vue';
 
 export default function (): RadarChartType {
+	const githubStore = useGithubStore();
+
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<RadarChartType['chart']>({
 		selectValue: [],
 		initChart,
-		resizeChart
+		resizeChart,
+		addRadarData
 	});
 
+	const indicator = [
+		{ name: 'Influence' },
+		{ name: 'Response' },
+		{ name: 'Activity' },
+		{ name: 'Trend' },
+		{ name: 'GitHub' }
+	];
 	/**
 	 * @returns 返回option配置
 	 */
@@ -33,20 +45,29 @@ export default function (): RadarChartType {
 				},
 				textStyle: {
 					fontSize: getHtmlFontPX(0.75)
+				},
+				formatter: (params: any) => {
+					console.log(params);
+
+					let resStr: string = `<div class="tooltip-title">${params.name}</div>`;
+					params.value.forEach((item: any, index: number) => {
+						resStr += `
+						<div class="tooltip-item">
+							<div class="tooltip-icon" style="background-color: ${params.color}"></div>
+							<div class="tooltip-label">${indicator[index].name}：</div>
+							<span class="tooltip-value">${item}</span>
+						</div>`;
+					});
+					return resStr;
 				}
 			},
+			color: colorList,
 			radar: {
 				axisName: {
-					color: ThemeColor.chartFontColor
+					color: ThemeColor.chartFontColor,
+					fontSize: getHtmlFontPX(0.75)
 				},
-				indicator: [
-					{ name: 'Sales', max: 6500 },
-					{ name: 'Administration', max: 16000 },
-					{ name: 'Information Technology', max: 30000 },
-					{ name: 'Customer Support', max: 38000 },
-					{ name: 'Development', max: 52000 },
-					{ name: 'Marketing', max: 25000 }
-				]
+				indicator: indicator
 			},
 			series: [
 				{
@@ -55,8 +76,6 @@ export default function (): RadarChartType {
 							width: 4
 						}
 					},
-					color: colorList,
-					name: 'Budget vs spending',
 					type: 'radar',
 					data: [
 						{
@@ -86,12 +105,34 @@ export default function (): RadarChartType {
 	 * @param container 图表容器id
 	 */
 	function initChart(nodes: PieSeriesOption['data']): any {
-		console.log(nodes, container.value, 'r');
 		if (!container.value) return;
+
+		const radarData: RadarSeriesOption['data'] = [];
+		nodes &&
+			nodes.forEach((item: any) => {
+				chart.selectValue.push(item.project_id);
+				const obj = {
+					value: [item.influence, item.response, item.activity, item.trend, item.github],
+					name: item.name,
+					areaStyle: { opacity: 0.2 }
+				};
+				radarData.push(obj);
+			});
+
 		const option = getOption();
+		option.series = [
+			{
+				emphasis: {
+					lineStyle: {
+						width: 4
+					}
+				},
+				type: 'radar',
+				data: radarData
+			}
+		];
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
-		console.log(chartRef.value);
 	}
 
 	/**
@@ -110,6 +151,28 @@ export default function (): RadarChartType {
 		if (chartRef.value) {
 			handleChartResize(chartRef.value);
 			resetFontSize();
+		}
+	}
+
+	/**
+	 * @description 雷达图添加
+	 */
+	function addRadarData(id: number) {
+		if (chart.selectValue.includes(id)) {
+			return message.warning('不能重复添加');
+		}
+		const item = githubStore.list.find(item => item.project_id === id)!;
+		const obj = {
+			value: [item.influence, item.response, item.activity, item.trend, item.github],
+			name: item.name,
+			areaStyle: { opacity: 0.2 }
+		};
+		const curOptions = chartRef.value?.getOption();
+
+		if (curOptions && Array.isArray(curOptions.series)) {
+			chart.selectValue.push(item.project_id);
+			curOptions.series[0].data.push(obj);
+			chartRef.value?.setOption(curOptions);
 		}
 	}
 

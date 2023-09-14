@@ -75,11 +75,14 @@ defineProps({
 
 		::v-deep .ant-spin-blur {
 			height: 100%;
-			padding: 5px;
 
 			&::after {
 				border-radius: 20px;
 			}
+		}
+
+		::v-deep .ant-spin {
+			max-height: unset;
 		}
 
 		::v-deep .ant-spin-container {
