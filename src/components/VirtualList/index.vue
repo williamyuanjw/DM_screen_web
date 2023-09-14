@@ -6,16 +6,26 @@
 			@mouseleave="leave"
 			@mouseenter="enter"
 			@mouseover="over"
-			@scroll="scroll"
+			@scroll="handleScroll"
 		>
 			<div class="fs-estimated-virtuallist-list" ref="listRef" :style="scrollStyle">
-				<div class="fs-estimated-virtuallist-list-item" v-for="i in renderList" :key="i.id" :id="String(i.id)">
+				<div
+					class="fs-estimated-virtuallist-list-item"
+					v-for="i in renderList"
+					:key="i.project_id"
+					:id="String(i.sort_id)"
+				>
 					<slot name="item" :item="i"></slot>
 				</div>
 			</div>
 
 			<div class="fs-estimated-virtuallist-list" :style="scrollStyle2">
-				<div class="fs-estimated-virtuallist-list-item" v-for="i in virList" :key="i.id" :id="String(i.id)">
+				<div
+					class="fs-estimated-virtuallist-list-item"
+					v-for="i in virList"
+					:key="i.project_id"
+					:id="String(i.sort_id)"
+				>
 					<slot name="item" :item="i"></slot>
 				</div>
 			</div>
@@ -24,9 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, computed, nextTick, onMounted, onUnmounted, reactive, ref, watch, PropType } from 'vue';
+import { type CSSProperties, computed, nextTick, onMounted, reactive, ref, watch, PropType } from 'vue';
 import type { IPosInfo, VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
+import { GitHubItem } from '@/pages/home/composables/use-github';
 const props = defineProps({
 	loading: {
 		type: Boolean,
@@ -37,12 +48,12 @@ const props = defineProps({
 		required: true
 	},
 	dataSource: {
-		type: Array as PropType<{ id: number; content: string }[]>,
+		type: Array as PropType<GitHubItem[]>,
 		required: true
 	}
 });
 
-// const emit = defineEmits(['scroll-end']);
+const emit = defineEmits(['scroll-end']);
 
 const contentRef = ref<HTMLDivElement>();
 
@@ -65,7 +76,7 @@ const endIndex = computed(() => Math.min(props.dataSource.length, state.startInd
 
 const renderList = computed(() => props.dataSource.slice(state.startIndex, endIndex.value));
 
-const virList = computed(() => props.dataSource.slice(0, state.startIndex));
+const virList = computed(() => props.dataSource.slice(0, state.maxCount)); // 复制多几个用来无缝滚动的
 
 const offsetDis = computed(() => (state.startIndex > 0 ? positions.value[state.startIndex - 1].bottom : 0));
 
@@ -84,7 +95,7 @@ const scrollStyle2 = computed(
 		} as CSSProperties)
 );
 
-watch([() => listRef.value, () => props.dataSource.length], () => {
+watch([() => listRef.value, () => props.dataSource.length, () => props.loading], () => {
 	props.dataSource.length && initPosition();
 	nextTick(() => {
 		props.dataSource.length && setPosition();
@@ -110,10 +121,10 @@ const initPosition = () => {
 	for (let i = 0; i < disLen; i++) {
 		const item = props.dataSource[state.preLen + i];
 		pos.push({
-			index: item.id,
+			index: item.sort_id,
 			height: props.estimatedHeight,
-			top: preTop ? preTop + i * props.estimatedHeight : item.id * props.estimatedHeight,
-			bottom: preBottom ? preBottom + (i + 1) * props.estimatedHeight : (item.id + 1) * props.estimatedHeight,
+			top: preTop ? preTop + i * props.estimatedHeight : item.sort_id * props.estimatedHeight,
+			bottom: preBottom ? preBottom + (i + 1) * props.estimatedHeight : (item.sort_id + 1) * props.estimatedHeight,
 			dHeight: 0
 		});
 	}
@@ -149,6 +160,7 @@ const setPosition = () => {
 			item.dHeight = 0;
 		}
 	}
+
 	state.listHeight = positions.value[len - 1].bottom;
 };
 
@@ -163,12 +175,11 @@ const move = () => {
 		return;
 	}
 	if (contentRef.value) {
+		// 实际不会触发 只会触发handleScroll
 		if (positions.value.length && contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom) {
 			contentRef.value.scrollTop = 0;
-			// !props.loading && emit('scroll-end');
-			console.log('bottom');
+			!props.loading && emit('scroll-end');
 		} else {
-			// console.log(contentRef.value.scrollTop, positions.value[positions.value.length - 1].bottom);
 			contentRef.value.scrollTop += 1;
 		}
 	}
@@ -183,6 +194,7 @@ const enter = () => {
 	state.isHover = true; //关闭_move
 	_cancel();
 };
+
 const leave = () => {
 	state.isHover = false; //开启_move
 	move();
@@ -192,26 +204,9 @@ const over = () => {
 	_cancel();
 };
 
-const scroll = () => {
-	if (
-		contentRef.value &&
-		positions.value.length &&
-		contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom
-	) {
-		contentRef.value.scrollTop = 0;
-		// !props.loading && emit('scroll-end');
-		console.log('bottoms');
-	}
-};
-
 const init = () => {
 	state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
 	state.maxCount = Math.ceil(state.viewHeight / props.estimatedHeight) + 1;
-	contentRef.value && contentRef.value.addEventListener('scroll', handleScroll);
-};
-
-const destory = () => {
-	contentRef.value && contentRef.value.removeEventListener('scroll', handleScroll);
 };
 
 // raf节流
@@ -228,11 +223,16 @@ function rafThrottle(fn: Function) {
 }
 
 const handleScroll = rafThrottle(() => {
-	const { scrollTop, clientHeight, scrollHeight } = contentRef.value!;
+	const { scrollTop } = contentRef.value!;
 	state.startIndex = binarySearch(positions.value, scrollTop);
-	const bottom = scrollHeight - clientHeight - scrollTop;
-	if (bottom <= 20) {
-		// !props.loading && emit('scroll-end');
+
+	if (
+		contentRef.value &&
+		positions.value.length &&
+		contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom
+	) {
+		contentRef.value.scrollTop = 0;
+		!props.loading && emit('scroll-end');
 	}
 });
 
@@ -250,15 +250,12 @@ const binarySearch = (list: IPosInfo[], value: number) => {
 			right = midIndex;
 		}
 	}
+
 	return templateIndex;
 };
 
 onMounted(() => {
 	init();
-});
-
-onUnmounted(() => {
-	destory();
 });
 </script>
 

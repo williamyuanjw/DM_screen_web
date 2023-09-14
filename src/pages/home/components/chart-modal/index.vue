@@ -1,14 +1,6 @@
 <template>
 	<div class="chart-modal">
-		<a-modal
-			wrapClassName="chart-modal-wrap"
-			width="60%"
-			v-model:visible="isShow"
-			@ok="submit"
-			:closable="false"
-			@cancel="cancel"
-			:footer="null"
-		>
+		<a-modal wrapClassName="chart-modal-wrap" width="60%" v-model:visible="isShow" :closable="false" :footer="null">
 			<div class="chart-modal-content">
 				<div class="chart-modal-first">
 					<multiple-select
@@ -16,10 +8,11 @@
 						dropdownClassName="chart-select-drop"
 						v-model:value="selectValue"
 						mode="multiple"
-						style="width: 40%"
+						style="width: 100%"
 						placeholder="请选择"
-						:options="[...Array(25)].map((_, i) => ({ value: (i + 10).toString(36) + (i + 1) }))"
-						@change="handleChange"
+						:options="optionStore.option"
+						@select="handleSelect"
+						@deselect="handleDel"
 					/>
 				</div>
 				<div :ref="chartDataObj[props.type].container" class="chart-container" />
@@ -32,13 +25,26 @@
 import { computed, watch, nextTick, PropType, ref } from 'vue';
 import { debounce } from 'lodash';
 
-import { MuSelectValueType, chartDataObjType } from '../../data';
+import { DateItem, MuSelectValueType, chartDataObjType } from '../../data';
 
 import useReviewEfficient from '../../composables/use-review-efficient';
 import useOpenRank from '../../composables/use-open-rank';
 
+import useOptionStore from '@/store/option';
+import useInitData from '@/store/initData';
+
+import { getProjectData } from '../../service';
+import { message } from 'ant-design-vue';
+import { dateList } from '../../config';
+
 const reviewEfficient = useReviewEfficient();
 const openRankChart = useOpenRank();
+const deverChart = useOpenRank();
+const attentChart = useOpenRank();
+const projectChart = useOpenRank();
+
+const optionStore = useOptionStore();
+const initDataStore = useInitData();
 
 const props = defineProps({
 	visible: {
@@ -61,41 +67,49 @@ const isShow = computed({
 		return props.visible;
 	},
 	set(value) {
-		console.log('value');
 		emit('update:visible', value);
 	}
 });
 
 const selectValue = ref<MuSelectValueType>([]);
 
-function cancel() {
-	console.log('cancel');
-	// isShow.value = false;
-}
-
-function submit() {
-	cancel();
-}
-
-const handleChange = (value: any) => {
-	console.log(value, selectValue.value, 'change');
-};
-
 const chartResize = debounce(() => {
-	reviewEfficient.chart.resizeChart();
-	openRankChart.chart.resizeChart();
+	chartDataObj[props.type].data.chart.resizeChart();
 }, 500);
 
 const chartDataObj: chartDataObjType = {
 	1: {
-		title: 'Reviewer efficiency',
+		title: 'PR Efficiency',
 		data: reviewEfficient,
 		container: reviewEfficient.container
 	},
 	2: {
 		title: 'OpenRank',
+		key: 'openrank',
 		data: openRankChart,
-		container: openRankChart.container
+		container: openRankChart.container,
+		chartType: 'line'
+	},
+	3: {
+		title: 'Developer Activity',
+		key: 'developer_activity',
+		data: deverChart,
+		container: deverChart.container,
+		chartType: 'line'
+	},
+	4: {
+		title: 'Project Attention',
+		key: 'project_attention',
+		data: attentChart,
+		container: attentChart.container,
+		chartType: 'bar'
+	},
+	5: {
+		title: 'Project Activity',
+		key: 'project_activity',
+		data: projectChart,
+		container: projectChart.container,
+		chartType: 'line'
 	}
 };
 
@@ -119,11 +133,118 @@ const initChartOptions = () => {
 			{
 				type: 'inside',
 				start: 0,
-				end: 120,
+				end: 50,
 				zoomLock: true
 			}
 		]
 	};
+};
+
+const handleSelectLine = async (value: number, name: string) => {
+	const res = await getProjectData({
+		type: chartDataObj[props.type].key as string,
+		project_id: value
+	});
+
+	if (res.code === 200) {
+		const dataArr: DateItem = [];
+		dateList.forEach(key => {
+			dataArr.push([key, +res.data[key] || 0]);
+		});
+
+		const curOptions = chartDataObj[props.type].data.chartRef.value?.getOption();
+
+		let chartType = chartDataObj[props.type].chartType;
+
+		if (curOptions && Array.isArray(curOptions.series)) {
+			curOptions.series[0] && (chartType = curOptions.series[0].type);
+			const obj = {
+				name,
+				type: chartType,
+				symbol: 'circle',
+				smooth: true,
+				symbolSize: 8,
+				showSymbol: false,
+				data: dataArr
+			};
+			curOptions.series.push(obj);
+			chartDataObj[props.type].data.chartRef.value?.setOption(curOptions);
+		}
+	}
+};
+
+const handleSelectPr = async (value: number, name: string) => {
+	const promiseArr = [
+		getProjectData({
+			type: 'pr_reviews',
+			project_id: value
+		}),
+		getProjectData({
+			type: 'pr_response_time',
+			project_id: value
+		})
+	];
+	Promise.all(promiseArr).then(res => {
+		console.log(res);
+
+		const reviewData = [];
+		const reviewsArr: DateItem = [];
+		const timeArr: DateItem = [];
+		dateList.forEach(key => {
+			reviewsArr.push([key, res[0].data[key] || 0]);
+		});
+		dateList.forEach(key => {
+			timeArr.push([key, res[1].data[key] || 0]);
+		});
+		const reviewsObj = {
+			name: name,
+			type: 'bar',
+			symbol: 'circle',
+			smooth: true,
+			symbolSize: 8,
+			showSymbol: false,
+			data: reviewsArr
+		};
+		const timeObj = {
+			name: name,
+			yAxisIndex: 1,
+			type: 'line',
+			symbol: 'circle',
+			smooth: true,
+			symbolSize: 8,
+			areaStyle: {
+				opacity: 0.4
+			},
+			showSymbol: false,
+			data: timeArr
+		};
+		reviewData.push(reviewsObj, timeObj);
+		const curOptions = chartDataObj[props.type].data.chartRef.value?.getOption();
+		if (curOptions && Array.isArray(curOptions.series)) {
+			curOptions.series.push(...reviewData);
+			console.log(curOptions);
+
+			chartDataObj[props.type].data.chartRef.value?.setOption(curOptions);
+		}
+	});
+};
+
+const handleSelect = async (value: any, option: any) => {
+	if (selectValue.value.length > 5) {
+		selectValue.value = selectValue.value.slice(0, 5);
+		return message.warning('最多只能选择5个项目');
+	}
+	props.type === 1 && handleSelectPr(value, option.label);
+	props.type !== 1 && handleSelectLine(value, option.label);
+};
+
+const handleDel = async (_: any, option: any) => {
+	const label = option.label;
+	const curOptions = chartDataObj[props.type].data.chartRef.value?.getOption();
+	if (curOptions && Array.isArray(curOptions.series)) {
+		curOptions.series = curOptions.series.filter(item => item.name !== label);
+		chartDataObj[props.type].data.chartRef.value?.setOption(curOptions, true);
+	}
 };
 
 watch(
@@ -131,13 +252,13 @@ watch(
 	value => {
 		if (value) {
 			nextTick(() => {
-				console.log(props.type);
 				initChartOptions();
-				chartDataObj[props.type].data.chart.initChart([]);
+				const key = chartDataObj[props.type].key;
+				chartDataObj[props.type].data.chart.initChart(initDataStore.list, key);
 			});
 			window.addEventListener('resize', chartResize);
 		} else {
-			selectValue.value && (selectValue.value.length = 0);
+			selectValue.value && (selectValue.value = props.defaultValue);
 			chartDataObj[props.type].data.chartRef.value?.clear();
 			window.removeEventListener('resize', chartResize);
 		}
@@ -156,7 +277,7 @@ watch(
 .chart-modal-content {
 	display: flex;
 	flex-direction: column;
-	height: 500px;
+	min-height: 500px;
 	margin-top: 25px;
 	overflow: hidden;
 	color: #ffffff;

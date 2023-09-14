@@ -1,82 +1,44 @@
 import { ref, reactive, shallowRef } from 'vue';
 import echarts from '@/echarts';
 import { PieSeriesOption, EChartsOption } from 'echarts';
-import { EChartsType } from 'echarts/core';
-import type { LineChartType, MuSelectValueType } from '../data';
+import { EChartsType, EChartsCoreOption } from 'echarts/core';
+import type { DateItem, LineChartType, MuSelectValueType, intervalMapType } from '../data';
 
 import { getHtmlFontPX, handleChartResize } from '@/utils/base';
 import ThemeColor from '@/themeColor';
-import { colorList } from '../config';
+import { colorList, dateList } from '../config';
 
-export default function (
-	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void
-): LineChartType {
+export default function (props?: {
+	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void;
+	type: number;
+}): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<LineChartType['chart']>({
-		selectValue: [],
+		selectValue: [1, 2, 3],
 		initChart,
 		resizeChart,
-		extraOption: {},
-		lastSeries: [
-			{
-				name: 'issue respose',
-				type: 'bar',
-				symbol: 'circle',
-				smooth: true,
-				symbolSize: 8,
-				tooltip: {
-					valueFormatter: function (value) {
-						return value + ' ml';
-					}
-				},
-
-				data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-			},
-			{
-				name: 'Precipitation',
-				type: 'bar',
-				symbol: 'circle',
-				smooth: true,
-				symbolSize: 8,
-				tooltip: {
-					valueFormatter: function (value) {
-						return value + ' ml';
-					}
-				},
-				data: [2.6, 5.9, 9.0, 26.4, 5.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
-			},
-			{
-				name: 'Temperature',
-				type: 'line',
-				symbol: 'circle',
-				smooth: true,
-				symbolSize: 8,
-				showSymbol: false,
-				yAxisIndex: 1,
-				tooltip: {
-					valueFormatter: function (value) {
-						return value + ' °C';
-					}
-				},
-				data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 20.0, 6.2]
-			},
-			{
-				name: 'b',
-				type: 'line',
-				smooth: true,
-				symbolSize: 8,
-				showSymbol: false,
-				yAxisIndex: 1,
-				tooltip: {
-					valueFormatter: function (value) {
-						return value + ' °C';
-					}
-				},
-				data: [20, 15, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-			}
-		]
+		extraOption: {}
 	});
+
+	const intervalMap: intervalMapType = {
+		openrank: {
+			interval: 100,
+			type: 'line'
+		},
+		project_attention: {
+			interval: 50,
+			type: 'bar'
+		},
+		developer_activity: {
+			interval: 30,
+			type: 'line'
+		},
+		project_activity: {
+			interval: 200,
+			type: 'line'
+		}
+	};
 
 	/**
 	 * @returns 返回option配置
@@ -97,15 +59,16 @@ export default function (
 				},
 				className: 'tooltip-review',
 				formatter: (params: any) => {
-					const issueValue = params[0].value;
-					const prValue = params[1].value;
-					const reviewerValue = params[2].value;
-					return `
-					<div>审阅者效率</div>
-					<div>issue响应：<span class="tooltip-value">${issueValue}</span></div>
-					<div>issue响应：<span class="tooltip-value">${prValue}</span></div>
-					<div>issue响应：<span class="tooltip-value">${reviewerValue}</span></div>
-				`;
+					let resStr: string = `<div>${params[0].axisValueLabel}</div>`;
+					params.forEach((item: any) => {
+						resStr += `
+						<div class="tooltip-item">
+							<div class="tooltip-icon" style="background-color: ${item.color}"></div>
+							<div class="tooltip-label">${item.seriesName}：</div>
+							<span class="tooltip-value">${item.value[1]}</span>
+						</div>`;
+					});
+					return resStr;
 				},
 				position: function (pos, _params, _dom, _rect, size) {
 					// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
@@ -130,7 +93,7 @@ export default function (
 				containLabel: true
 			},
 			toolbox: {
-				right: !showHandler ? '2%' : '3%',
+				right: !props?.showHandler ? '2%' : '3%',
 				iconStyle: {
 					borderColor: ThemeColor.chartFontColor
 				},
@@ -141,15 +104,9 @@ export default function (
 				},
 				itemGap: Number(getHtmlFontPX(0.25).replace('px', '')),
 				itemSize: Number(getHtmlFontPX(0.875).replace('px', '')),
-
 				feature: {
 					magicType: { type: ['line', 'bar'] },
-					myRestore: {
-						title: 'restore',
-						icon: 'path://M512 981.333333c-209.866667 0-396.693333-126.026667-466.293333-314.08a35.52 35.52 0 0 1 23.626666-44.426666 38.613333 38.613333 0 0 1 48 20.693333c58.666667 158.933333 217.013333 265.493333 394.666667 265.6s336-106.666667 394.666667-266.133333a37.6 37.6 0 0 1 28.853333-23.626667 38.986667 38.986667 0 0 1 35.786667 11.946667 34.773333 34.773333 0 0 1 7.146666 35.36c-69.386667 188.373333-256.48 314.666667-466.453333 314.666666z m431.36-574.08a37.92 37.92 0 0 1-35.946667-24.266666C849.386667 222.56 690.613333 114.88 512 114.72S174.72 222.346667 116.746667 382.773333A38.72 38.72 0 0 1 69.333333 403.733333a35.786667 35.786667 0 0 1-24.106666-44.373333C113.333333 169.866667 301.013333 42.666667 512 42.666667s398.666667 127.306667 467.146667 316.96a34.56 34.56 0 0 1-4.906667 32.64 38.933333 38.933333 0 0 1-30.88 14.986666z',
-						onclick: () => handleRestore()
-					},
-					myModal: !showHandler
+					myModal: !props?.showHandler
 						? {}
 						: {
 								title: '详情',
@@ -158,77 +115,49 @@ export default function (
 									// 移动端要取消默认行为不然弹窗会立刻关闭
 									// 阻止touchend后的click事件发生
 									e.event.preventDefault();
-									showHandler && showHandler(true, 2, chart.selectValue);
+									props.showHandler && props.showHandler(true, props.type, chart.selectValue);
 								}
 						  }
 				}
 			},
-			dataZoom: [
-				{
-					type: 'inside',
-					start: 0,
-					end: 50,
-					zoomLock: true
-				}
-			],
-
-			xAxis: [
-				{
-					type: 'category',
-					data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-					axisLabel: {
-						fontSize: getHtmlFontPX(0.75)
-					},
-					axisLine: {
-						lineStyle: {
-							color: ThemeColor.chartFontColor
-						}
-					},
-					axisTick: {
-						show: false
-					}
-					// axisPointer: { show: false }
-				}
-			],
-			yAxis: [
-				{
-					type: 'value',
-					// name: 'Precipitation',
-					min: 0,
-					max: 250,
-					interval: 50,
-					axisLabel: {
-						// formatter: '{value} ml',
-						fontSize: getHtmlFontPX(0.75)
-					},
-					nameTextStyle: {
-						fontSize: getHtmlFontPX(0.75)
-					},
-					splitLine: {
-						lineStyle: {
-							color: ThemeColor.chartFontColor
-						}
+			// dataZoom: [
+			// 	{
+			// 		type: 'inside',
+			// 		start: 0,
+			// 		end: 100,
+			// 		zoomLock: true
+			// 	}
+			// ],
+			xAxis: {
+				type: 'category',
+				axisLabel: {
+					fontSize: getHtmlFontPX(0.75)
+				},
+				axisLine: {
+					lineStyle: {
+						color: ThemeColor.chartFontColor
 					}
 				},
-				{
-					type: 'value',
-					// name: 'Temperature',
-					min: 0,
-					max: 25,
-					interval: 5,
-					axisLabel: {
-						formatter: '{value} °C',
-						fontSize: getHtmlFontPX(0.75)
-					},
-					splitLine: {
-						show: false
-					},
-					nameTextStyle: {
-						fontSize: getHtmlFontPX(0.75)
+				axisTick: {
+					show: false
+				}
+			},
+			yAxis: {
+				type: 'value',
+				interval: 100,
+				axisLabel: {
+					fontSize: getHtmlFontPX(0.75)
+				},
+				nameTextStyle: {
+					fontSize: getHtmlFontPX(0.75)
+				},
+				splitLine: {
+					lineStyle: {
+						color: ThemeColor.chartFontColor
 					}
 				}
-			],
-			series: chart.lastSeries
+			},
+			series: []
 		};
 		// 浅合并
 		return Object.assign(option, chart.extraOption);
@@ -238,10 +167,30 @@ export default function (
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: PieSeriesOption['data']): any {
-		console.log(nodes);
+	function initChart(nodes: PieSeriesOption['data'], type: keyof intervalMapType): any {
 		if (!container.value) return;
+		const openRankData: EChartsCoreOption[] = [];
+		nodes &&
+			nodes.forEach((item: any) => {
+				const data: DateItem = [];
+				dateList.forEach(key => {
+					data.push([key, item[type][key] || 0]);
+				});
+				const obj = {
+					name: item.name,
+					type: intervalMap[type].type,
+					symbol: 'circle',
+					smooth: true,
+					symbolSize: 8,
+					showSymbol: false,
+					data
+				};
+				openRankData.push(obj);
+			});
+
 		const option = getOption();
+		option.yAxis && ((option.yAxis as any).interval = intervalMap[type].interval);
+		option.series = openRankData;
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
@@ -261,20 +210,7 @@ export default function (
 	function resizeChart() {
 		if (chartRef.value) {
 			handleChartResize(chartRef.value);
-			console.log(chartRef.value.getHeight());
-
 			resetFontSize();
-		}
-	}
-
-	/**
-	 * @description 自定义toolbox restore方法
-	 */
-	function handleRestore() {
-		const option = getOption();
-		if (chartRef.value) {
-			chartRef.value.clear();
-			chartRef.value.setOption(option);
 		}
 	}
 

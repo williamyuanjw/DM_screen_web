@@ -14,6 +14,16 @@ export default defineConfig({
 			resolvers: [AntDesignVueResolver()]
 		})
 	],
+	server: {
+		proxy: {
+			'/api': {
+				target: 'http://124.221.177.11',
+				// ws: true,
+				changeOrigin: true,
+				rewrite: path => path.replace(/^\/api/, '')
+			}
+		}
+	},
 	resolve: {
 		alias: {
 			// 键必须以斜线开始和结束

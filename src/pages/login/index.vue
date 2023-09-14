@@ -1,13 +1,6 @@
 <template>
 	<div class="login">
-		<transition name="loading">
-			<div id="load" v-if="loadShow">
-				<div class="load_img">
-					<img class="jzxz1" src="@/assets/images/jzxz1.png" />
-					<img class="jzxz2" src="@/assets/images/jzxz2.png" />
-				</div>
-			</div>
-		</transition>
+		<transition-loading :isShow="loadShow" />
 
 		<div class="login-header">开源数据发展趋势仪表盘</div>
 
@@ -37,8 +30,10 @@
 
 <script lang="ts" setup>
 import { Rule } from 'ant-design-vue/lib/form';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { login } from './service';
+import headerImg from '@/assets/images/login-header.png';
 
 type FormModel = {
 	userName: string;
@@ -62,65 +57,33 @@ const router = useRouter();
 
 const loadShow = ref<boolean>(true);
 const formModel = reactive<FormModel>({
-	userName: 'admin',
+	userName: 'yuan',
 	passWord: '123456'
 });
 
 // 表单提交
 const onFinish = async (values: FormModel) => {
-	values.userName === 'admin' && values.passWord === '123456' && router.push('/home');
+	const postData = {
+		user_name: values.userName,
+		pass_word: values.passWord
+	};
+	const res = await login(postData);
+	if (res.code === 200) {
+		localStorage.setItem('token', res.data.token);
+		router.push('/home');
+	}
 };
 
-// 模拟加载
-setTimeout(() => {
-	loadShow.value = false;
-}, 1000);
+onMounted(() => {
+	let img = new Image();
+	img.src = headerImg;
+	img.onload = () => {
+		loadShow.value = false;
+	};
+});
 </script>
 
 <style lang="scss" scoped>
-@keyframes xz1 {
-	from {
-		transform: rotate(0deg);
-	}
-
-	50% {
-		transform: rotate(180deg);
-	}
-
-	to {
-		transform: rotate(360deg);
-	}
-}
-
-@keyframes xz2 {
-	from {
-		transform: rotate(0deg);
-	}
-
-	50% {
-		transform: rotate(-180deg);
-	}
-
-	to {
-		transform: rotate(-360deg);
-	}
-}
-
-.loading-enter,
-.loading-leave-to {
-	opacity: 0;
-}
-
-.loading-enter-to,
-.loading-leave {
-	opacity: 1;
-}
-
-.loading-enter-active,
-.loading-leave-active {
-	transition: all 2s;
-}
-
 .login {
 	position: relative;
 	display: flex;
@@ -130,29 +93,6 @@ setTimeout(() => {
 	height: 100%;
 	background: url('@/assets/images/login-bg.jpg') no-repeat;
 	background-size: 100% 100%;
-
-	#load {
-		position: absolute;
-		z-index: 999;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		height: 100%;
-		background: url('@/assets/images/load-bg.png') no-repeat;
-		background-size: cover;
-
-		.load_img {
-			.jzxz1 {
-				position: absolute;
-				animation: xz1 8s infinite linear;
-			}
-
-			.jzxz2 {
-				animation: xz2 7s infinite linear;
-			}
-		}
-	}
 
 	&-header {
 		position: absolute;

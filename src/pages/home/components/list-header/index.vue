@@ -1,15 +1,18 @@
 <template>
 	<div class="list-header">
-		<div class="list-header-title" v-for="item in titleList" :key="item">{{ item }}</div>
+		<div class="list-header-title" v-for="item in titleList" :key="item.label" :style="{ width: item.width }">
+			{{ item.label }}
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { PropType } from 'vue';
+import { TitltListItem } from '../../data';
 
 defineProps({
 	titleList: {
-		type: Array as PropType<string[]>,
+		type: Array as PropType<TitltListItem[]>,
 		required: true
 	}
 });
@@ -22,7 +25,6 @@ defineProps({
 	padding-top: 8px;
 
 	.list-header-title {
-		flex: 1;
 		overflow: hidden;
 		font-size: 16px;
 		color: #558dfd;
