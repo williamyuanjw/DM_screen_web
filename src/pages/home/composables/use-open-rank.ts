@@ -15,7 +15,7 @@ export default function (props?: {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<LineChartType['chart']>({
-		selectValue: [1, 2, 3],
+		selectValue: [1, 2, 4],
 		initChart,
 		resizeChart,
 		extraOption: {}
@@ -35,7 +35,7 @@ export default function (props?: {
 			type: 'line'
 		},
 		project_activity: {
-			interval: 200,
+			interval: 400,
 			type: 'line'
 		}
 	};
@@ -63,10 +63,13 @@ export default function (props?: {
 					params.forEach((item: any) => {
 						resStr += `
 						<div class="tooltip-item">
-							<div class="tooltip-icon" style="background-color: ${item.color}"></div>
-							<div class="tooltip-label">${item.seriesName}：</div>
+							<div class="tooltip-label-icon">
+								<span class="tooltip-icon" style="background-color: ${item.color}"></span>
+								<span class="tooltip-label">${item.seriesName}：</span>
+							</div>
 							<span class="tooltip-value">${item.value[1]}</span>
-						</div>`;
+						</div>
+						`;
 					});
 					return resStr;
 				},
@@ -142,21 +145,6 @@ export default function (props?: {
 					show: false
 				}
 			},
-			yAxis: {
-				type: 'value',
-				interval: 100,
-				axisLabel: {
-					fontSize: getHtmlFontPX(0.75)
-				},
-				nameTextStyle: {
-					fontSize: getHtmlFontPX(0.75)
-				},
-				splitLine: {
-					lineStyle: {
-						color: ThemeColor.chartFontColor
-					}
-				}
-			},
 			series: []
 		};
 		// 浅合并
@@ -187,9 +175,24 @@ export default function (props?: {
 				};
 				openRankData.push(obj);
 			});
-
+		chart.extraOption = {
+			yAxis: {
+				type: 'value',
+				interval: intervalMap[type].interval,
+				axisLabel: {
+					fontSize: getHtmlFontPX(0.75)
+				},
+				nameTextStyle: {
+					fontSize: getHtmlFontPX(0.75)
+				},
+				splitLine: {
+					lineStyle: {
+						color: ThemeColor.chartFontColor
+					}
+				}
+			}
+		};
 		const option = getOption();
-		option.yAxis && ((option.yAxis as any).interval = intervalMap[type].interval);
 		option.series = openRankData;
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);

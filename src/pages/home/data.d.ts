@@ -30,7 +30,7 @@ export type RadarChartType = {
 		selectValue: MuSelectValueType;
 		initChart(nodes: PieSeriesOption['data']): void;
 		resizeChart(): void;
-		addRadarData(id: number): void;
+		addRadarData(name: string): void;
 	};
 	container: Ref<HTMLDivElement | undefined>;
 	chartRef: Ref<EChartsType | undefined>;

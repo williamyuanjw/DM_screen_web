@@ -1,7 +1,12 @@
 <template>
 	<div class="list-header">
 		<div class="list-header-title" v-for="item in titleList" :key="item.label" :style="{ width: item.width }">
-			{{ item.label }}
+			<a-tooltip color="rgba(73, 146, 255, 0.8)">
+				<template #title>
+					{{ item.label }}
+				</template>
+				{{ item.label }}
+			</a-tooltip>
 		</div>
 	</div>
 </template>

@@ -19,7 +19,7 @@ export default function (): ChartModalType {
 	const chartModal = reactive<ChartModalType>({
 		visible: false,
 		changeVisible,
-		selectValue: [1, 2, 3],
+		selectValue: [1, 2, 4],
 		type: 0
 	});
 

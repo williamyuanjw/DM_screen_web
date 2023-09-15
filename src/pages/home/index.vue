@@ -6,11 +6,34 @@
 			<home-header />
 			<div style="padding: 0 8px" class="chart-content">
 				<!-- 整体布局 左 中 右 -->
-				<a-row :gutter="[8, 8]" style="height: 100%">
+				<a-row :gutter="[8, 8]" class="chart-content-row">
 					<!-- 左侧 -->
-					<a-col :span="7" style="height: 100%">
+					<a-col v-bind="leftRightCol" class="chart-content-col">
 						<a-row class="chart-content-left">
 							<a-col class="chart-content-left-item" :span="24">
+								<ModuleItem title="PR处理效率" :loading="initLoading">
+									<div :ref="reviewEfficient.container" class="chart-container" />
+								</ModuleItem>
+							</a-col>
+							<a-col class="chart-content-left-item" :span="24">
+								<ModuleItem title="OpenRank" :loading="initLoading">
+									<div :ref="openRankChart.container" class="chart-container"></div>
+								</ModuleItem>
+							</a-col>
+						</a-row>
+					</a-col>
+					<!-- 中间 -->
+					<a-col v-bind="centerCol" class="chart-content-col">
+						<a-row class="chart-content-center">
+							<a-col class="chart-content-center-item" :span="24">
+								<ModuleItem :loading="initLoading">
+									<div class="index-data">
+										<index-num :initData="initData" />
+										<radar-list :radarFirst="radarFirst" />
+									</div>
+								</ModuleItem>
+							</a-col>
+							<a-col class="chart-content-center-item" :span="24">
 								<ModuleItem title="Github指数" :loading="github.loading">
 									<div class="virtual-list-content">
 										<list-header :titleList="titleList" />
@@ -26,7 +49,7 @@
 													<template #title>
 														<span>项目名：{{ item.name }}</span>
 													</template>
-													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item.project_id)">
+													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item.name)">
 														<span class="virtual-list-item-col">{{ item.name }}</span>
 														<span class="virtual-list-item-col">{{ item.influence }}</span>
 														<span class="virtual-list-item-col">{{ item.trend }}</span>
@@ -40,46 +63,23 @@
 									</div>
 								</ModuleItem>
 							</a-col>
-							<a-col class="chart-content-left-item" :span="24">
-								<ModuleItem title="OpenRank">
-									<div :ref="openRankChart.container" class="chart-container"></div>
-								</ModuleItem>
-							</a-col>
-						</a-row>
-					</a-col>
-					<!-- 中间 -->
-					<a-col :span="10" style="height: 100%">
-						<a-row class="chart-content-center">
-							<a-col class="chart-content-center-item" :span="24">
-								<ModuleItem>
-									<div class="index-data">
-										<index-num :initData="initData" />
-										<radar-list :radarFirst="radarFirst" />
-									</div>
-								</ModuleItem>
-							</a-col>
-							<a-col class="chart-content-center-item" :span="24">
-								<ModuleItem title="关注度">
-									<div :ref="attentChart.container" class="chart-container"></div>
-								</ModuleItem>
-							</a-col>
 						</a-row>
 					</a-col>
 					<!-- 右侧 -->
-					<a-col :span="7" style="height: 100%">
+					<a-col v-bind="leftRightCol" class="chart-content-col">
 						<a-row class="chart-content-right">
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="PR处理效率">
-									<div :ref="reviewEfficient.container" class="chart-container" />
+								<ModuleItem title="关注度" :loading="initLoading">
+									<div :ref="attentChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="开发者活跃度">
+								<ModuleItem title="开发者活跃度" :loading="initLoading">
 									<div :ref="deverChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="项目活跃度">
+								<ModuleItem title="项目活跃度" :loading="initLoading">
 									<div :ref="projectChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
@@ -126,7 +126,7 @@ import useRadar from './composables/use-radar';
 import useOptionStore from '@/store/option';
 import useInitData from '@/store/initData';
 
-import { titleList } from './config';
+import { titleList, leftRightCol, centerCol } from './config';
 
 import { getInit, getOptions } from './service';
 
@@ -187,7 +187,9 @@ const initData = reactive({
 	gitHub: 0
 });
 
+const initLoading = ref<boolean>(false);
 const getInitData = async () => {
+	initLoading.value = true;
 	const res = await getInit();
 	if (res.code === 200) {
 		nextTick(() => {
@@ -202,6 +204,7 @@ const getInitData = async () => {
 		initData.openRank = res.data.other.githubAverage;
 		initData.gitHub = res.data.other.openrankAverage;
 	}
+	initLoading.value = false;
 };
 
 onMounted(() => {
@@ -231,6 +234,11 @@ onBeforeUnmount(() => {
 		.chart-content {
 			height: calc(100% - 77px);
 			margin-top: 12px;
+
+			.chart-content-row,
+			.chart-content-col {
+				height: 100%;
+			}
 
 			.chart-container {
 				width: 100%;
@@ -316,16 +324,33 @@ onBeforeUnmount(() => {
 				}
 			}
 		}
+	}
+}
 
-		@media (max-width: 600px) {
-			.chart-content {
-				height: calc(100% - 82px);
+// 小屏幕下的样式
+@media (max-width: 576px) {
+	.home {
+		height: unset;
+		background: #060c20;
+
+		.chart-content {
+			.chart-content-col:first-child {
+				height: 1000px !important;
 			}
-		}
 
-		@media (max-width: 450px) {
-			.chart-content {
-				height: calc(100% - 92px);
+			&-left,
+			&-center {
+				&-item {
+					flex: 1 !important;
+				}
+			}
+
+			.chart-content-col:nth-child(2) {
+				height: 1200px !important;
+			}
+
+			.chart-content-col:nth-child(3) {
+				height: 1500px !important;
 			}
 		}
 	}
@@ -333,32 +358,58 @@ onBeforeUnmount(() => {
 </style>
 
 <style lang="scss">
+.ant-tooltip-inner {
+	min-height: unset;
+}
+
 .tooltip-review {
+	// width: 80%;
+	overflow: hidden;
+
 	.tooltip-title {
 		width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
 
+	.tooltip-btn {
+		width: max-content;
+		padding: 2px 5px;
+		margin: 5px 5px 0 0;
+		color: #ffffff;
+		cursor: pointer;
+		background-color: #ff6e76;
+		border-radius: 4px;
+	}
+
 	.tooltip-item {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 	}
 
-	.tooltip-label {
-		width: 120px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.tooltip-icon {
-		width: 6px;
-		height: 6px;
+	.tooltip-label-icon {
+		display: flex;
+		align-items: center;
 		margin-right: 5px;
-		border-radius: 50%;
+		overflow: hidden;
+
+		.tooltip-label {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.tooltip-icon {
+			width: 6px;
+			height: 6px;
+			margin-right: 5px;
+			border-radius: 50%;
+		}
 	}
 
 	.tooltip-value {
+		flex: 1;
+		flex-shrink: 0;
 		font-size: 15px;
 		font-weight: bold;
 		color: #666666;
