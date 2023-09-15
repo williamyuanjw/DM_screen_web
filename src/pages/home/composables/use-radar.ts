@@ -1,6 +1,6 @@
 import { ref, reactive, shallowRef, watch } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption, EChartsOption, RadarSeriesOption } from 'echarts';
+import { EChartsOption, RadarSeriesOption } from 'echarts';
 import { EChartsType } from 'echarts/core';
 import type { RadarChartType } from '../data';
 
@@ -9,6 +9,8 @@ import { colorList } from '../config';
 import ThemeColor from '@/themeColor';
 import useGithubStore from '@/store/github';
 import { message } from 'ant-design-vue';
+import { RadarOption } from 'echarts/types/dist/shared';
+import { GitHubItem } from './use-github';
 
 export default function (): RadarChartType {
 	const githubStore = useGithubStore();
@@ -22,13 +24,13 @@ export default function (): RadarChartType {
 		addRadarData
 	});
 
-	const indicator = [
-		{ name: 'Influence' },
-		{ name: 'Response' },
-		{ name: 'Activity' },
-		{ name: 'Trend' },
-		{ name: 'GitHub' }
-	];
+	const indicator = ref<RadarOption['indicator']>([
+		{ name: 'Influence', max: 120 },
+		{ name: 'Response', max: 120 },
+		{ name: 'Activity', max: 120 },
+		{ name: 'Trend', max: 120 },
+		{ name: 'GitHub', max: 120 }
+	]);
 	/**
 	 * @returns 返回option配置
 	 */
@@ -56,7 +58,7 @@ export default function (): RadarChartType {
 						<div class="tooltip-item">
 							<div class="tooltip-label-icon">
 								<div class="tooltip-icon" style="background-color: ${params.color}"></div>
-								<div class="tooltip-label">${indicator[index].name}：</div>
+								<div class="tooltip-label">${indicator.value![index].name}：</div>
 							</div>
 							<span class="tooltip-value">${item}</span>
 						</div>
@@ -74,7 +76,7 @@ export default function (): RadarChartType {
 					color: ThemeColor.chartFontColor,
 					fontSize: getHtmlFontPX(0.75)
 				},
-				indicator: indicator
+				indicator: indicator.value
 			},
 			series: {
 				symbolSize: 10,
@@ -94,24 +96,44 @@ export default function (): RadarChartType {
 	}
 
 	/**
+	 * @description 计算设置最大值
+	 */
+	function calcMax() {
+		const maxObj: Record<string, any> = chart.selectValue.reduce(
+			(max, item) => {
+				max.influence = Math.max(max.influence, +item.influence);
+				max.response = Math.max(max.response, +item.response);
+				max.activity = Math.max(max.activity, +item.activity);
+				max.trend = Math.max(max.trend, +item.trend);
+				max.github = Math.max(max.github, +item.github);
+				return max;
+			},
+			{ influence: 0, response: 0, activity: 0, trend: 0, github: 0 }
+		);
+		Object.keys(maxObj).forEach((key, index) => {
+			indicator.value![index].max = +maxObj[key] + 20;
+		});
+	}
+
+	/**
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: PieSeriesOption['data']): any {
+	function initChart(nodes: GitHubItem[]): any {
 		if (!container.value) return;
 
 		const radarData: RadarSeriesOption['data'] = [];
 		nodes &&
 			nodes.forEach((item: any) => {
-				chart.selectValue.push(item.project_id);
+				chart.selectValue.push(item);
 				const obj = {
-					value: [item.influence, item.response, item.activity, item.trend, item.github],
+					value: [+item.influence, +item.response, +item.activity, +item.trend, +item.github],
 					name: item.name,
 					areaStyle: { opacity: 0.4 }
 				};
 				radarData.push(obj);
 			});
-
+		calcMax();
 		const option = getOption();
 		(option.series as RadarSeriesOption).data?.push(...radarData);
 		chartRef.value = echarts.init(container.value);
@@ -142,7 +164,7 @@ export default function (): RadarChartType {
 	 * @description 雷达图添加
 	 */
 	function addRadarData(name: string) {
-		if (chart.selectValue.includes(name)) {
+		if (chart.selectValue.find(item => item.name === name)) {
 			return message.warning('不能重复添加');
 		}
 
@@ -159,8 +181,10 @@ export default function (): RadarChartType {
 		const curOptions = chartRef.value?.getOption();
 
 		if (curOptions && Array.isArray(curOptions.series)) {
-			chart.selectValue.push(item.name);
+			chart.selectValue.push(item);
 			curOptions.series[0].data.push(obj);
+			calcMax();
+			(curOptions.radar as any)[0].indicator = indicator.value;
 			chartRef.value?.setOption(curOptions);
 		}
 	}
@@ -174,9 +198,11 @@ export default function (): RadarChartType {
 						const name = (e.target as HTMLDivElement).dataset.id;
 						const curOptions = chartRef.value?.getOption();
 						if (curOptions && Array.isArray(curOptions.series)) {
-							const index = chart.selectValue.indexOf(name as string);
+							const index = chart.selectValue.findIndex(item => item.name === (name as string));
 							chart.selectValue.splice(index, 1);
 							curOptions.series[0].data = curOptions.series[0].data.filter((item: any) => item.name !== name);
+							calcMax();
+							(curOptions.radar as any)[0].indicator = indicator.value;
 							chartRef.value?.setOption(curOptions, true);
 						}
 					});

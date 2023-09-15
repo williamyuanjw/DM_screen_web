@@ -14,7 +14,7 @@ export default function (
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<LineChartType['chart']>({
-		selectValue: [1, 2, 4],
+		selectValue: [4, 8, 9],
 		initChart,
 		resizeChart,
 		extraOption: {}
@@ -81,14 +81,14 @@ export default function (
 				bottom: '5%',
 				containLabel: true
 			},
-			// dataZoom: [
-			// 	{
-			// 		type: 'inside',
-			// 		start: 0,
-			// 		end: ,
-			// 		zoomLock: true
-			// 	}
-			// ],
+			dataZoom: [
+				{
+					type: 'inside',
+					start: 0,
+					end: 50,
+					zoomLock: true
+				}
+			],
 			toolbox: {
 				right: !showHandler ? '2%' : '3%',
 				iconStyle: {
@@ -156,8 +156,8 @@ export default function (
 					}
 				},
 				{
-					// min: 0,
-					// max: 100,
+					min: 0,
+					max: 120,
 					interval: 50,
 					type: 'value',
 					inverse: true,
