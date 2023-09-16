@@ -5,7 +5,9 @@ const routes = [
 		path: '/login',
 		name: 'Login',
 		component: Login,
-		children: []
+		meta: {
+			title: '开源数据发展趋势-登录页'
+		}
 	}
 ];
 

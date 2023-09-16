@@ -40,7 +40,7 @@
 										<virtual-list
 											:data-source="github.dataSource"
 											:loading="github.loading"
-											:estimated-height="15"
+											:estimated-height="30"
 											@scroll-end="github.addData"
 											class="virtual-list"
 										>
@@ -201,8 +201,8 @@ const getInitData = async () => {
 			reviewEfficient.chart.initChart(res.data.list);
 			radarFirst.chart.initChart(res.data.list);
 		});
-		initData.openRank = res.data.other.githubAverage;
-		initData.gitHub = res.data.other.openrankAverage;
+		initData.openRank = res.data.other.openrankAverage;
+		initData.gitHub = res.data.other.githubAverage;
 	}
 	initLoading.value = false;
 };

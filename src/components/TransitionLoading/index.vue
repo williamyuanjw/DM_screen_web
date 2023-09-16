@@ -76,12 +76,22 @@ defineProps({
 	.load_img {
 		.jzxz1 {
 			position: absolute;
+			width: 365px;
 			animation: xz1 8s infinite linear;
 		}
 
 		.jzxz2 {
+			width: 365px;
 			animation: xz2 7s infinite linear;
 		}
+	}
+}
+
+// 小屏幕下的样式
+@media (max-width: 576px) {
+	#load {
+		align-items: baseline;
+		padding-top: 20vh;
 	}
 }
 </style>
