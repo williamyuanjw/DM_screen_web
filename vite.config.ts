@@ -17,6 +17,7 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
+				// target: 'http://127.0.0.1:8081',
 				target: 'http://124.221.177.11',
 				// ws: true,
 				changeOrigin: true,
@@ -61,6 +62,18 @@ export default defineConfig({
 					minPixelValue: 1 //px小于12的不会被转换
 				})
 			]
+		}
+	},
+	build: {
+		chunkSizeWarningLimit: 1500,
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (id.includes('node_modules')) {
+						return id.toString().split('node_modules/')[1].split('/')[0].toString();
+					}
+				}
+			}
 		}
 	}
 });

@@ -8,10 +8,10 @@ const defaultContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 const service = axios.create({
 	baseURL: '/', // api的base_url
 	timeout: 50000, // 请求超时时间
-	withCredentials: true // 跨域携带cookie
-	// validateStatus: (status: number) => {
-	// 	return status >= 200 && status <= 500;
-	// }
+	withCredentials: true, // 跨域携带cookie
+	validateStatus: (status: number) => {
+		return status >= 200 && status <= 500;
+	}
 });
 
 const getToken = function (): string {
@@ -70,8 +70,8 @@ service.interceptors.response.use(
 		if (headersType && contentType.includes(headersType)) {
 			return response;
 		}
+
 		if (data.code === 401) {
-			message.error(dataMessage);
 			router.replace({ path: '/login' });
 			return Promise.reject(data);
 		}

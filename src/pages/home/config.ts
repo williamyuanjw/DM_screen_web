@@ -1,6 +1,28 @@
 import ThemeColor from '@/themeColor';
 import { TitltListItem } from './data';
 
+// 三栏布局响应式
+export const leftRightCol = {
+	sm: {
+		span: 7
+	},
+	xs: {
+		span: 24,
+		order: 2
+	}
+};
+
+export const centerCol = {
+	sm: {
+		span: 10,
+		order: 2
+	},
+	xs: {
+		span: 24,
+		order: 1
+	}
+};
+
 export const colorList = [
 	ThemeColor.lineBlue,
 	ThemeColor.lineGreen,

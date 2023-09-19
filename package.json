@@ -20,6 +20,7 @@
 		"axios": "^1.4.0",
 		"dayjs": "^1.11.7",
 		"echarts": "^5.4.2",
+		"gsap": "^3.12.2",
 		"lodash": "^4.17.21",
 		"pinia": "^2.1.6",
 		"postcss-pxtorem": "^6.0.0",

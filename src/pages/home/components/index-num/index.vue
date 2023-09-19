@@ -1,9 +1,9 @@
 <template>
 	<div class="index-num">
 		<a-row class="index-row-value">
-			<a-col class="index-col">{{ initData.openRank }}</a-col>
+			<a-col class="index-col">{{ renderOpen.toFixed(2) }}</a-col>
 			<a-divider type="vertical" class="index-divider" />
-			<a-col class="index-col">{{ initData.gitHub }}</a-col>
+			<a-col class="index-col">{{ renderGit.toFixed(2) }}</a-col>
 		</a-row>
 		<a-row class="index-row-label">
 			<a-col class="index-col">OpenRank平均值</a-col>
@@ -13,16 +13,29 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, onMounted } from 'vue';
+import { PropType, ref, watch } from 'vue';
+import gsap from 'gsap';
 
-defineProps({
+const props = defineProps({
 	initData: {
 		type: Object as PropType<{ openRank: string | number; gitHub: string | number }>,
 		default: () => ({ openRank: 0, gitHub: 0 })
 	}
 });
 
-onMounted(() => {});
+const renderOpen = ref<number>(0);
+const renderGit = ref<number>(0);
+
+watch(
+	() => props.initData,
+	value => {
+		gsap.to(renderOpen, { duration: 1, value: +value.openRank });
+		gsap.to(renderGit, { duration: 1, value: +value.gitHub });
+	},
+	{
+		deep: true
+	}
+);
 </script>
 
 <style lang="scss" scoped>
@@ -46,21 +59,12 @@ onMounted(() => {});
 			font-size: 52px;
 			color: #ffeb7b;
 			text-align: center;
-
-			&:first-child::after {
-				position: absolute;
-				top: 25%;
-				right: 0;
-				width: 1px;
-				height: 50%;
-				content: '';
-				background: rgb(255 255 255 / 20%);
-			}
 		}
 
 		.index-divider {
-			height: 100%;
-			background-color: rgb(255 255 255 / 70%);
+			height: unset;
+			margin-block: 20px;
+			background: rgb(255 255 255 / 20%);
 		}
 
 		@mixin border-conrner {

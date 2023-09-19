@@ -3,9 +3,11 @@ import Home from '@/pages/home/index.vue';
 const routes = [
 	{
 		path: '/home',
-		name: '主页',
+		name: 'Home',
 		component: Home,
-		children: []
+		meta: {
+			title: '开源数据发展趋势-主页'
+		}
 	}
 ];
 

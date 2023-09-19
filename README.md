@@ -1,34 +1,33 @@
-# pro_data_web
+# DM_screen_web
 
 #### 介绍
 
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+🔥🔥Vue3 + TS + Echarts 优秀可视化数据大屏解决方案，包括移动端与 PC 端的响应式适配处理
+项目地址：http://124.221.177.11/#/login
+账号：yuan
+密码：123456
 
 #### 软件架构
 
 `node v16.14.2`
 
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
 #### 使用说明
 
-1.  npm install 或 yarn
-2.  npm run dev
-3.  代码提交需要符合 eslint、commitlint、stylelint 等规范
-4.  使用前请在 vscode 安装 Prettier eslint stylelint 等插件，方便格式化代码
+1.  `npm install 或 yarn`
+2.  `npm run dev`
+3.  `代码提交需要符合 Eslint、Commitlint、Stylelint 等规范`
+4.  `使用前请在 vscode 安装 Prettier Eslint Stylelint 等插件，方便格式化代码`
+
+#### 项目亮点
+
+`后面补充`
 
 #### 参与贡献
 
-1.  根据 dev 分支创建新分支
-2.  在新分支上开发 提交代码时 pull dev 分支的代码再提交
-3.  之后在 gitee 上发起代码合并请求，请求将代码合并至 master
-4.  xxx
+1.  `根据 dev 分支创建新分支`
+2.  `在新分支上开发 提交代码时 pull dev 分支的代码再提交`
+3.  `之后在 gitee 上发起代码合并请求，请求将代码合并至 master`
+4.  `有问题与想法欢迎大家提Issues`
 
 #### 特技
 
