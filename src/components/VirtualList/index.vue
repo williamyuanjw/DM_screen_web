@@ -11,6 +11,7 @@
 			<div class="fs-estimated-virtuallist-list" ref="listRef" :style="scrollStyle">
 				<div
 					class="fs-estimated-virtuallist-list-item"
+					ref="itemRef"
 					v-for="i in renderList"
 					:key="i.project_id"
 					:id="String(i.sort_id)"
@@ -38,6 +39,7 @@ import { type CSSProperties, computed, nextTick, onMounted, reactive, ref, watch
 import type { IPosInfo, VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
 import { GitHubItem } from '@/pages/home/composables/use-github';
+
 const props = defineProps({
 	loading: {
 		type: Boolean,
@@ -58,6 +60,8 @@ const emit = defineEmits(['scroll-end']);
 const contentRef = ref<HTMLDivElement>();
 
 const listRef = ref<HTMLDivElement>();
+
+const itemRef = ref<HTMLDivElement[]>();
 
 const positions = ref<IPosInfo[]>([]);
 
@@ -95,21 +99,6 @@ const scrollStyle2 = computed(
 		} as CSSProperties)
 );
 
-watch([() => listRef.value, () => props.dataSource.length, () => props.loading], () => {
-	props.dataSource.length && initPosition();
-	nextTick(() => {
-		props.dataSource.length && setPosition();
-		move();
-	});
-});
-
-watch(
-	() => state.startIndex,
-	() => {
-		setPosition();
-	}
-);
-
 // 初始化：拿到数据源初始化 pos 数组
 const initPosition = () => {
 	const pos: IPosInfo[] = [];
@@ -135,6 +124,7 @@ const initPosition = () => {
 // 数据 item 渲染完成后，更新数据item的真实高度
 const setPosition = () => {
 	const nodes = listRef.value?.children;
+
 	if (!nodes || !nodes.length) return;
 	[...nodes].forEach(node => {
 		const rect = node.getBoundingClientRect();
@@ -250,13 +240,47 @@ const binarySearch = (list: IPosInfo[], value: number) => {
 			right = midIndex;
 		}
 	}
-
 	return templateIndex;
 };
 
+const handleSetPosition = () => {
+	props.dataSource.length && initPosition();
+	nextTick(() => {
+		if (itemRef.value) {
+			state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
+			// 拿数组第一项计算最大
+			state.maxCount = Math.ceil(state.viewHeight / itemRef.value[0].offsetHeight) + 1;
+		}
+		props.dataSource.length && setPosition();
+	});
+};
+
 onMounted(() => {
+	if (contentRef.value) {
+		const observer = new ResizeObserver(handleSetPosition);
+		observer.observe(contentRef.value);
+	}
 	init();
 });
+
+watch([() => listRef.value, () => props.dataSource.length], handleSetPosition);
+
+watch(
+	() => state.startIndex,
+	() => {
+		setPosition();
+	}
+);
+
+watch(
+	() => props.loading,
+	value => {
+		// 加载完之后开始动画
+		if (!value) {
+			move();
+		}
+	}
+);
 </script>
 
 <style scoped lang="scss">

@@ -14,7 +14,7 @@ export default function (
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<LineChartType['chart']>({
-		selectValue: [1, 2, 3],
+		selectValue: [4, 8, 9],
 		initChart,
 		resizeChart,
 		extraOption: {}
@@ -31,6 +31,7 @@ export default function (
 			},
 
 			tooltip: {
+				confine: true,
 				axisPointer: {
 					lineStyle: {
 						width: 2,
@@ -39,13 +40,18 @@ export default function (
 				},
 				className: 'tooltip-review',
 				formatter: (params: any) => {
-					let resStr: string = `<div>${params[0].axisValueLabel} (reviews | days)</div>`;
+					let resStr: string = `
+						<div>${params[0].axisValueLabel}</div>
+						<div> (reviews | days)</div>
+					`;
 					let i = 0;
 					while (i < params.length) {
 						resStr += `
 						<div class="tooltip-item">
-							<div class="tooltip-icon" style="background-color: ${params[i].color}"></div>
-							<div class="tooltip-label">${params[i].seriesName}：</div>
+							<div class="tooltip-label-icon">
+								<div class="tooltip-icon" style="background-color: ${params[i].color}"></div>
+								<div class="tooltip-label">${params[i].seriesName}：</div>
+							</div>
 							<span class="tooltip-value">${params[i].value[1]} | ${params[i + 1].value[1]}</span>
 						</div>`;
 						i += 2;
@@ -69,7 +75,7 @@ export default function (
 			// grid.left grid.right grid.top grid.bottom grid.width grid.height 决定的是包括了坐标轴标签在内的所有内容所形成的矩形的位置。
 			// 这常用于『防止标签溢出』的场景，标签溢出指的是，标签长度动态变化时，可能会溢出容器或者覆盖其他组件。
 			grid: {
-				top: '20%',
+				top: '10%',
 				left: '5%',
 				right: '5%',
 				bottom: '5%',
@@ -79,7 +85,7 @@ export default function (
 				{
 					type: 'inside',
 					start: 0,
-					end: 30,
+					end: 50,
 					zoomLock: true
 				}
 			],
@@ -151,7 +157,7 @@ export default function (
 				},
 				{
 					min: 0,
-					max: 100,
+					max: 120,
 					interval: 50,
 					type: 'value',
 					inverse: true,

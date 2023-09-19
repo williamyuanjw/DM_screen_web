@@ -277,7 +277,7 @@ watch(
 .chart-modal-content {
 	display: flex;
 	flex-direction: column;
-	min-height: 500px;
+	min-height: 450px;
 	margin-top: 25px;
 	overflow: hidden;
 	color: #ffffff;
@@ -310,6 +310,20 @@ watch(
 			::v-deep .ant-select-selector {
 				border-color: #4992ff;
 			}
+		}
+	}
+}
+
+// 小屏幕下的样式
+@media (max-width: 576px) {
+	.chart-modal-select {
+		::v-deep .ant-select-selection-item {
+			height: 38px;
+			line-height: 38px;
+		}
+
+		::v-deep .ant-select-selection-item-remove {
+			font-size: 22px;
 		}
 	}
 }
@@ -351,6 +365,14 @@ watch(
 
 	.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state {
 		color: rgb(255 255 255 / 60%);
+	}
+}
+
+@media (max-width: 576px) {
+	.chart-select-drop {
+		.ant-select-item {
+			min-height: 2.4rem;
+		}
 	}
 }
 </style>

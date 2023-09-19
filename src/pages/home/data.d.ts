@@ -1,6 +1,7 @@
 import { Ref } from 'vue';
 import { PieSeriesOption, LineSeriesOption, BarSeriesOption } from 'echarts';
 import { EChartsType, EChartsCoreOption } from 'echarts/core';
+import { GitHubItem } from './composables/use-github';
 export type MuSelectValueType = (string | number)[];
 
 // 定义折柱混合图的配置类型
@@ -27,10 +28,10 @@ export type chartDataObjType = Record<
 
 export type RadarChartType = {
 	chart: {
-		selectValue: MuSelectValueType;
+		selectValue: GitHubItem[];
 		initChart(nodes: PieSeriesOption['data']): void;
 		resizeChart(): void;
-		addRadarData(id: number): void;
+		addRadarData(name: string): void;
 	};
 	container: Ref<HTMLDivElement | undefined>;
 	chartRef: Ref<EChartsType | undefined>;
