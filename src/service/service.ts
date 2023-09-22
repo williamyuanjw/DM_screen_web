@@ -80,6 +80,10 @@ service.interceptors.response.use(
 			message.error(dataMessage);
 			return Promise.reject(data);
 		}
+
+		if (data.code !== 200) {
+			return Promise.reject(data);
+		}
 		return data;
 	},
 	(error: AxiosError) => {

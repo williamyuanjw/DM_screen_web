@@ -65,8 +65,8 @@ const validatePass = async (_rule: Rule, value: string) => {
 };
 
 const rules: Record<string, Rule[]> = {
-	userName: [{ validator: validatePass, trigger: 'change' }],
-	passWord: [{ validator: validatePass, trigger: 'change' }]
+	userName: [{ validator: validatePass, trigger: 'blur' }],
+	passWord: [{ validator: validatePass, trigger: 'blur' }]
 };
 
 const router = useRouter();
@@ -82,6 +82,8 @@ const loginForm = ref<FormInstance>();
 // 表单提交
 const onFinish = async () => {
 	loginForm.value?.validateFields().then(async (formValues: any) => {
+		console.log('pass?', formValues);
+
 		const postData = {
 			user_name: formValues.userName,
 			pass_word: formValues.passWord

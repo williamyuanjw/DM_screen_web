@@ -53,6 +53,7 @@ export function POST<T, K = any>(url: string, data?: T, config?: AxiosRequestCon
 			console.error(url);
 			console.error(error);
 		}
+
 		if (error.response?.status === 400) {
 			// 刷新频率过高
 			message.error(`${error.response?.data?.message || '请求失败，请重试'}`);
