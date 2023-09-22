@@ -40,10 +40,14 @@ type FormModel = {
 	passWord: string;
 };
 
+const reg = /[`~!@#$%^&*()_\-+=<>?:"{}|,\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g;
 // 自定义校验规则
 const validatePass = async (_rule: Rule, value: string) => {
-	if (value === '') {
+	if (!value) {
 		return Promise.reject('请输入账号或密码');
+	} else if (reg.test(value)) {
+		return Promise.reject('请勿输入特殊字符搞些歪门邪道');
+	} else if (reg.test(value)) {
 	}
 	return Promise.resolve();
 };
