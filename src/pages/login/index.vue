@@ -4,7 +4,7 @@
 
 		<div class="login-header">开源数据发展趋势仪表盘</div>
 
-		<a-form :model="formModel" name="loginForm" class="login-form" @finish="onFinish" :rules="rules">
+		<a-form :model="formModel" ref="loginForm" class="login-form" :rules="rules">
 			<a-form-item name="userName">
 				<a-input class="login-form-input" size="large" v-model:value="formModel.userName" placeholder="账号">
 					<template #prefix>
@@ -22,7 +22,9 @@
 			</a-form-item>
 
 			<a-form-item style="text-align: center">
-				<a-button size="large" class="login-form-btn" type="primary" html-type="submit">登录</a-button>
+				<a-button size="large" class="login-form-btn" type="primary" @press-enter="onFinish" @click="onFinish"
+					>登录</a-button
+				>
 			</a-form-item>
 		</a-form>
 	</div>
@@ -34,16 +36,20 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from './service';
 import headerImg from '@/assets/images/login-header.png';
+import { FormInstance } from 'ant-design-vue/es';
 
 type FormModel = {
 	userName: string;
 	passWord: string;
 };
 
+const reg = /[`~!@#$%^&*()_\-+=<>?:"{}|,\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g;
 // 自定义校验规则
 const validatePass = async (_rule: Rule, value: string) => {
-	if (value === '') {
+	if (!value) {
 		return Promise.reject('请输入账号或密码');
+	} else if (reg.test(value)) {
+		return Promise.reject('请勿输入特殊字符搞些歪门邪道');
 	}
 	return Promise.resolve();
 };
@@ -61,17 +67,21 @@ const formModel = reactive<FormModel>({
 	passWord: '123456'
 });
 
+const loginForm = ref<FormInstance>();
+
 // 表单提交
-const onFinish = async (values: FormModel) => {
-	const postData = {
-		user_name: values.userName,
-		pass_word: values.passWord
-	};
-	const res = await login(postData);
-	if (res.code === 200) {
-		localStorage.setItem('token', res.data.token);
-		router.push('/home');
-	}
+const onFinish = async () => {
+	loginForm.value?.validateFields().then(async (formValues: any) => {
+		const postData = {
+			user_name: formValues.userName,
+			pass_word: formValues.passWord
+		};
+		const res = await login(postData);
+		if (res.code === 200) {
+			localStorage.setItem('token', res.data.token);
+			router.push('/home');
+		}
+	});
 };
 
 onMounted(() => {
