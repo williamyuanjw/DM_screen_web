@@ -6,7 +6,13 @@
 
 		<a-form :model="formModel" ref="loginForm" class="login-form" :rules="rules">
 			<a-form-item name="userName">
-				<a-input class="login-form-input" size="large" v-model:value="formModel.userName" placeholder="账号">
+				<a-input
+					class="login-form-input"
+					size="large"
+					v-model:value="formModel.userName"
+					placeholder="账号"
+					@press-enter="onFinish"
+				>
 					<template #prefix>
 						<img class="login-form-icon" src="@/assets/images/account-icon.png" />
 					</template>
@@ -14,7 +20,13 @@
 			</a-form-item>
 
 			<a-form-item name="passWord">
-				<a-input-password class="login-form-input" size="large" v-model:value="formModel.passWord" placeholder="密码">
+				<a-input-password
+					class="login-form-input"
+					size="large"
+					v-model:value="formModel.passWord"
+					placeholder="密码"
+					@press-enter="onFinish"
+				>
 					<template #prefix>
 						<img class="login-form-icon" src="@/assets/images/pwd-icon.png" />
 					</template>
@@ -22,9 +34,7 @@
 			</a-form-item>
 
 			<a-form-item style="text-align: center">
-				<a-button size="large" class="login-form-btn" type="primary" @press-enter="onFinish" @click="onFinish"
-					>登录</a-button
-				>
+				<a-button size="large" class="login-form-btn" type="primary" @click="onFinish">登录</a-button>
 			</a-form-item>
 		</a-form>
 	</div>
