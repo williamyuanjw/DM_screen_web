@@ -346,7 +346,7 @@ onBeforeUnmount(() => {
 			}
 
 			.chart-content-col:nth-child(2) {
-				height: 1200px !important;
+				height: 1500px !important;
 			}
 
 			.chart-content-col:nth-child(3) {

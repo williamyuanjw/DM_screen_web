@@ -136,8 +136,8 @@ const initChartOptions = () => {
 		dataZoom: [
 			{
 				type: 'inside',
-				start: 0,
-				end: 50,
+				start: 50,
+				end: 100,
 				zoomLock: true
 			}
 		]
