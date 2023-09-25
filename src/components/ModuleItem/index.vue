@@ -87,6 +87,7 @@ defineProps({
 
 		::v-deep .ant-spin-container {
 			height: 100%;
+			overflow: hidden;
 		}
 	}
 }

@@ -10,9 +10,11 @@
 						mode="multiple"
 						style="width: 100%"
 						placeholder="请选择"
-						:options="optionStore.option"
+						:filter-option="false"
+						:options="searchOptions"
 						@select="handleSelect"
 						@deselect="handleDel"
+						@search="handleSearch"
 					/>
 				</div>
 				<div :ref="chartDataObj[props.type].container" class="chart-container" />
@@ -34,7 +36,7 @@ import useOptionStore from '@/store/option';
 import useInitData from '@/store/initData';
 
 import { getProjectData } from '../../service';
-import { message } from 'ant-design-vue';
+import { SelectProps, message } from 'ant-design-vue';
 import { dateList } from '../../config';
 
 const reviewEfficient = useReviewEfficient();
@@ -45,6 +47,8 @@ const projectChart = useOpenRank();
 
 const optionStore = useOptionStore();
 const initDataStore = useInitData();
+
+const searchOptions = ref<SelectProps['options']>([]);
 
 const props = defineProps({
 	visible: {
@@ -247,6 +251,11 @@ const handleDel = async (_: any, option: any) => {
 	}
 };
 
+const handleSearch = debounce(async (value: string) => {
+	const option = optionStore.option.filter((item: any) => item.label.indexOf(value) !== -1);
+	searchOptions.value = option;
+}, 300);
+
 watch(
 	() => props.visible,
 	value => {
@@ -271,6 +280,11 @@ watch(
 		selectValue.value = value;
 	}
 );
+
+watch(
+	() => optionStore.option,
+	value => (searchOptions.value = value)
+);
 </script>
 
 <style lang="scss" scoped>
@@ -288,6 +302,10 @@ watch(
 
 	.chart-modal-first {
 		margin: 16px 0;
+	}
+
+	::v-deep .ant-select {
+		color: rgb(255 255 255 / 80%);
 	}
 
 	.chart-modal-select {
@@ -364,6 +382,10 @@ watch(
 	}
 
 	.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state {
+		color: rgb(255 255 255 / 60%);
+	}
+
+	.ant-empty-description {
 		color: rgb(255 255 255 / 60%);
 	}
 }

@@ -84,8 +84,8 @@ export default function (
 			dataZoom: [
 				{
 					type: 'inside',
-					start: 0,
-					end: 50,
+					start: 50,
+					end: 100,
 					zoomLock: true
 				}
 			],
@@ -141,6 +141,7 @@ export default function (
 			],
 			yAxis: [
 				{
+					max: 2500,
 					type: 'value',
 					interval: 500,
 					axisLabel: {
@@ -157,11 +158,10 @@ export default function (
 				},
 				{
 					min: 0,
-					max: 120,
+					max: 250,
 					interval: 50,
 					type: 'value',
 					inverse: true,
-
 					axisLabel: {
 						fontSize: getHtmlFontPX(0.75)
 					},

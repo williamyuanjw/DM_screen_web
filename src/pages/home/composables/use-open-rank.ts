@@ -51,6 +51,7 @@ export default function (props?: {
 			},
 
 			tooltip: {
+				confine: true,
 				axisPointer: {
 					lineStyle: {
 						width: 2,
@@ -126,8 +127,8 @@ export default function (props?: {
 			dataZoom: [
 				{
 					type: 'inside',
-					start: 0,
-					end: 50,
+					start: 50,
+					end: 100,
 					zoomLock: true
 				}
 			],
