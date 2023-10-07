@@ -82,8 +82,6 @@ const loginForm = ref<FormInstance>();
 // 表单提交
 const onFinish = async () => {
 	loginForm.value?.validateFields().then(async (formValues: any) => {
-		console.log('pass?', formValues);
-
 		const postData = {
 			user_name: formValues.userName,
 			pass_word: formValues.passWord
