@@ -1,6 +1,6 @@
 # DM_screen_web
 
-#### 介绍
+### 介绍
 
 🔥🔥Vue3 + TS + Echarts 优秀可视化数据大屏解决方案，包括移动端与 PC 端的响应式适配处理<br>
 账号：yuan<br>
@@ -14,7 +14,7 @@
 
 `github开源地址`：[https://github.com/williamyuanjw/DM_screen_web](https://github.com/williamyuanjw/DM_screen_web)
 
-#### 软件架构
+### 软件架构
 
 `node v16.14.2`
 
@@ -32,7 +32,7 @@
 
 ![img](https://file.atomgit.com/uploads/issue/1695822798143_2264.jpg '#left')
 
-## 操作文档
+### 操作文档
 
 登录项目之后，在首页以关注度图表为例
 
@@ -50,14 +50,14 @@
 
 ![img](https://file.atomgit.com/uploads/issue/1695822908470_5895.png '#left')
 
-#### 使用说明
+### 使用说明
 
 1.  `npm install 或 yarn`
 2.  `npm run dev`
 3.  `代码提交需要符合 Eslint、Commitlint、Stylelint 等规范`
 4.  `使用前请在 vscode 安装 Prettier Eslint Stylelint 等插件，方便格式化代码`
 
-#### 项目亮点
+### 项目亮点
 
 - 实现对不同大小的屏幕/设备的**良好适配**以及针对小屏幕设备有不同的**布局以及兼容**
 - **不定高无限滚动加载虚拟列表**的实现，控制列表渲染数据量的同时实现列表**无限滚动**
@@ -133,7 +133,7 @@
 - 使用 transition 标签以及**图片预加载**来优化图片未加载完全等导致的**用户视觉体验**问题
 - 实现 Echarts 等组件的**按需加载**。在打包过程中对项目大体积模块进行分块打包以及优化项目字体文件大小
 
-#### 参与贡献
+### 参与贡献
 
 1.  `根据 dev 分支创建新分支`
 2.  `在新分支上开发 提交代码时 pull dev 分支的代码再提交`
