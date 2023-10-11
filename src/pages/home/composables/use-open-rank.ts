@@ -177,6 +177,7 @@ export default function (props?: {
 				openRankData.push(obj);
 			});
 		chart.extraOption = {
+			...chart.extraOption,
 			yAxis: {
 				type: 'value',
 				interval: intervalMap[type].interval,
