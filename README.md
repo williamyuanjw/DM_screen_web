@@ -3,9 +3,16 @@
 #### 介绍
 
 🔥🔥Vue3 + TS + Echarts 优秀可视化数据大屏解决方案，包括移动端与 PC 端的响应式适配处理<br>
-项目地址：http://124.221.177.11/#/login<br>
 账号：yuan<br>
 密码：123456
+
+### 项目地址
+
+[http://124.221.177.11/#/login](http://124.221.177.11/#/login)
+
+`gitee开源地址`：[https://gitee.com/yuanjinwei/DM_screen_web](https://gitee.com/yuanjinwei/DM_screen_web)
+
+`github开源地址`：[https://github.com/williamyuanjw/DM_screen_web](https://github.com/williamyuanjw/DM_screen_web)
 
 #### 软件架构
 
