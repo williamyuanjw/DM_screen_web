@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path';
+import viteCompression from 'vite-plugin-compression';
 // import postcsspxtoviewport from 'postcss-px-to-viewport';
 import postCssPxToRem from 'postcss-pxtorem';
 
@@ -12,6 +13,9 @@ export default defineConfig({
 		vue(),
 		Components({
 			resolvers: [AntDesignVueResolver()]
+		}),
+		viteCompression({
+			threshold: 10240
 		})
 	],
 	server: {
@@ -65,9 +69,11 @@ export default defineConfig({
 		}
 	},
 	build: {
-		chunkSizeWarningLimit: 1500,
 		rollupOptions: {
 			output: {
+				chunkFileNames: 'js/[name]-[hash].js',
+				entryFileNames: 'js/[name]-[hash].js',
+				assetFileNames: '[ext]/[name]-[hash].[ext]',
 				manualChunks(id) {
 					if (id.includes('node_modules')) {
 						return id.toString().split('node_modules/')[1].split('/')[0].toString();
