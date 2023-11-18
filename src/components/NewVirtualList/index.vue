@@ -151,7 +151,6 @@ const handleScroll = rafThrottle(() => {
  */
 const init = () => {
 	state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
-	console.log(state.viewHeight, 'state.viewHeight');
 };
 
 /**
