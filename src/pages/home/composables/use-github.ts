@@ -34,13 +34,12 @@ export default function (): GitHubType {
 				page_size: github.page_size
 			})
 				.then(res => {
-					const newData: GitHubItem[] = (res.data.list || []).map((item: GitHubItem, index: number) => ({
-						...item,
-						sort_id: (github.page - 1) * github.page_size + index
-					}));
 					github.total = res.data.total || 0;
-					github.dataSource = [...github.dataSource, ...newData];
+					github.dataSource = [...github.dataSource, ...res.data.list];
 					githubStore.list = github.dataSource;
+				})
+				.catch(() => {
+					github.page--;
 				})
 				.finally(() => {
 					github.loading = false;

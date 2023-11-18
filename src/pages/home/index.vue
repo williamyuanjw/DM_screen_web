@@ -37,10 +37,9 @@
 								<ModuleItem title="Github指数" :loading="github.loading">
 									<div class="virtual-list-content">
 										<list-header :titleList="titleList" />
-										<virtual-list
+										<new-virtual-list
 											:data-source="github.dataSource"
 											:loading="github.loading"
-											:estimated-height="30"
 											@scroll-end="github.addData"
 											class="virtual-list"
 										>
@@ -59,7 +58,7 @@
 													</div>
 												</a-tooltip>
 											</template>
-										</virtual-list>
+										</new-virtual-list>
 									</div>
 								</ModuleItem>
 							</a-col>
