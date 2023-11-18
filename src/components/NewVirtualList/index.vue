@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { type CSSProperties, computed, onMounted, reactive, ref, watch, PropType } from 'vue';
+import { type CSSProperties, computed, onMounted, reactive, ref, watch, PropType, nextTick } from 'vue';
 import type { IPosInfo, VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
 import { GitHubItem } from '@/pages/home/composables/use-github';
@@ -151,6 +151,7 @@ const handleScroll = rafThrottle(() => {
  */
 const init = () => {
 	state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
+	console.log(state.viewHeight, 'state.viewHeight');
 };
 
 /**
@@ -169,12 +170,14 @@ const addNewList = () => {
  * @description 重新计算最大数
  */
 const handleSetPosition = () => {
-	if (itemRef.value) {
-		state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
-		// 拿数组第一项计算最大
-		state.maxCount = Math.ceil(state.viewHeight / itemRef.value[0].offsetHeight) + 1;
-		state.itemHeight = itemRef.value[0].offsetHeight;
-	}
+	state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
+	nextTick(() => {
+		if (itemRef.value) {
+			// 拿数组第一项计算最大
+			state.maxCount = Math.ceil(state.viewHeight / itemRef.value[0].offsetHeight) + 1;
+			state.itemHeight = itemRef.value[0].offsetHeight;
+		}
+	});
 };
 
 /**
@@ -197,6 +200,7 @@ watch(
 	() => {
 		// 接受到的列表高度变化
 		addNewList();
+		handleSetPosition();
 	}
 );
 

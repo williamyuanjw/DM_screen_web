@@ -38,6 +38,9 @@ export default function (): GitHubType {
 					github.dataSource = [...github.dataSource, ...res.data.list];
 					githubStore.list = github.dataSource;
 				})
+				.catch(() => {
+					github.page--;
+				})
 				.finally(() => {
 					github.loading = false;
 				});
