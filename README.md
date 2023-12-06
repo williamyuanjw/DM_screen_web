@@ -84,14 +84,6 @@
     <td>Boolean</td>
     <td>必传</td>
   </tr>
-  <tr>
-    <td>
-      <b>estimatedHeight</b>
-    </td>
-    <td>每一项的初始高度，用于传入渲染后再通过计算得到不定高列表的真实高度</td>
-    <td>Number</td>
-    <td>必传</td>
-  </tr>
 	<tr>
 		<td>
 			<b>@scrollEnd</b>
@@ -103,10 +95,10 @@
 </table>
 
 ```html
-<virtual-list
+// 2023.11月更新过
+<new-virtual-list
 	:data-source="github.dataSource"
 	:loading="github.loading"
-	:estimated-height="30"
 	@scroll-end="github.addData"
 	class="virtual-list"
 >
@@ -125,7 +117,7 @@
 			</div>
 		</a-tooltip>
 	</template>
-</virtual-list>
+</new-virtual-list>
 ```
 
 - Echarts 图表相关 hooks 的封装，提高如折柱混合图、图表详情弹窗的**代码复用性**
