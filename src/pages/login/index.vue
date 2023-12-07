@@ -46,6 +46,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { login } from './service';
 import headerImg from '@/assets/images/login-header.png';
+import loginBgImg from '@/assets/images/login-bg.jpg';
 import { FormInstance } from 'ant-design-vue/es';
 
 type FormModel = {
@@ -72,6 +73,26 @@ const rules: Record<string, Rule[]> = {
 const router = useRouter();
 
 const loadShow = ref<boolean>(true);
+const imgCount = 2;
+let curCount = 0;
+const addImgCount = () => {
+	curCount++;
+	if (curCount === imgCount) {
+		loadShow.value = false;
+	}
+};
+
+const loadImg = () => {
+	const imgArr = [loginBgImg, headerImg];
+	imgArr.forEach(item => {
+		const newImage = new Image();
+		newImage.src = item;
+		newImage.onload = () => {
+			addImgCount();
+		};
+	});
+};
+
 const formModel = reactive<FormModel>({
 	userName: 'yuan',
 	passWord: '123456'
@@ -95,11 +116,7 @@ const onFinish = async () => {
 };
 
 onMounted(() => {
-	let img = new Image();
-	img.src = headerImg;
-	img.onload = () => {
-		loadShow.value = false;
-	};
+	loadImg();
 });
 </script>
 
