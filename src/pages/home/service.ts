@@ -1,7 +1,7 @@
 import { GET } from '@/service/api';
 
 export const getOptions = () => {
-	return GET('/home/getOptions');
+	return GET('/api/home/getOptions');
 };
 
 export const getInit = () => {

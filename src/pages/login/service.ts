@@ -1,5 +1,17 @@
-import { POST } from '@/service/api';
+import resquet from '../../service/service';
+// Ts类型
+interface CommResponse {
+	code: number;
+	mes: string;
+	data: any;
+}
 
-export const login = (params: { user_name: string; pass_word: string }) => {
-	return POST('/common/login', params);
+interface LoginResponse extends CommResponse {
+	data: {
+		token: string;
+	};
+}
+
+export const login = (params: { username: string; password: number }) => {
+	return resquet.post<LoginResponse>('/login', params);
 };

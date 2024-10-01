@@ -22,6 +22,7 @@ export interface RequestConfig extends AxiosRequestConfig {
  * @param params
  * @param config
  */
+
 export function GET<T, K = any>(url: string, params?: T, config?: AxiosRequestConfig): Promise<IAxiosResponse<K>> {
 	return http.get<K>(url, { ...config, params });
 }
