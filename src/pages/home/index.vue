@@ -162,7 +162,7 @@ const addImgCount = () => {
 		loadShow.value = false;
 	}
 };
-
+// 异步图片加载方式
 const loadImg = () => {
 	const imgArr = [indexImg, centerImg, headerImg, mapImg, lbxImg, jtImg];
 	imgArr.forEach(item => {

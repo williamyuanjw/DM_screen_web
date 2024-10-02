@@ -1,6 +1,6 @@
 <template>
 	<div class="home-header">
-		<div class="home-header-title">开源数据发展趋势仪表盘</div>
+		<div class="home-header-title">Github开发者活跃度</div>
 		<div class="home-header-time">
 			<span class="date-value">{{ date }}</span>
 			<span class="time-value">{{ time }}</span>
@@ -13,12 +13,12 @@ import dayjs from 'dayjs';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 let timer: any = null;
-const time = ref<string>('--');
-const date = ref<string>('--');
+const time = ref<string>();
+const date = ref<string>();
 
 const getTime = () => {
 	time.value = dayjs().format('dddd HH:mm:ss');
-	date.value = dayjs().format('YYYY/MM/DD');
+	date.value = dayjs().format('YYYY-MM-DD');
 };
 
 onMounted(() => {

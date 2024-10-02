@@ -1,25 +1,23 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
-// qs是一个用于url参数转化（parse和stringify）的库。
-//可以将一个普通的object序列化成一个查询字符串，也可以将一个查询字符串解析成一个object。
 import qs from 'qs';
 import router from '@/router';
-// import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue';
 
 const env = import.meta.env.DEV;
-
 const defaultContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 const service = axios.create({
 	baseURL: '/', // api的base_url
-	// http://localhost:3000
-	timeout: 5000, // 请求超时时间
-	// withCredentials: true, // 跨域携带cookie
+	timeout: 50000, // 请求超时时间
+	withCredentials: true, // 跨域携带cookie
 	validateStatus: (status: number) => {
 		return status >= 200 && status <= 500;
 	}
 });
+
 const getToken = function (): string {
 	return window.localStorage.getItem('token') || '';
 };
+
 /**
  * @description 处理开发环境打包环境接口url
  * @returns url
@@ -65,6 +63,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
 	response => {
 		const { data } = response;
+		const dataMessage = data.msg || data.error_description || '未知错误';
 		const headersType = response.headers['Content-Type'];
 		const contentType: unknown[] = ['application/vnd.ms-excel;charset=utf-8', 'application/octet-stream'];
 		// 文件流数据直接返回
@@ -73,13 +72,18 @@ service.interceptors.response.use(
 		}
 
 		if (data.code === 401) {
-			// 未登录或者token过期
 			router.replace({ path: '/login' });
 			return Promise.reject(data);
 		}
-		// if (data.code !== 0) {
-		// 	return Promise.reject(data);
-		// }
+
+		if (data.hasOwnProperty('error_code')) {
+			message.error(dataMessage);
+			return Promise.reject(data);
+		}
+
+		if (data.code !== 200) {
+			return Promise.reject(data);
+		}
 		return data;
 	},
 	(error: AxiosError) => {

@@ -51,7 +51,7 @@ import { FormInstance, message } from 'ant-design-vue/es';
 
 type FormModel = {
 	userName: string;
-	passWord: number;
+	passWord: string;
 };
 
 const reg = /[`~!@#$%^&*()_\-+=<>?:"{}|,\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘’，。、]/g;
@@ -98,23 +98,35 @@ const loadImg = () => {
 };
 
 const formModel = reactive<FormModel>({
-	userName: 'admin',
-	passWord: 123456
+	userName: 'yuan',
+	passWord: '123456'
 });
 
 const loginForm = ref<FormInstance>();
 
 // 表单提交
 const onFinish = async () => {
-	const postData = {
-		username: formModel.userName,
-		password: formModel.passWord
-	};
-	const res = await login(postData);
-	if (res.code == 1) {
-		message.error(res.msg);
-		return;
-	}
+	// const postData = {
+	// 	username: formModel.userName,
+	// 	password: formModel.passWord
+	// };
+	// const res = await login(postData);
+	// if (res.code == 1) {
+	// 	message.error(res.msg);
+	// 	return;
+	// }
+	// router.push('/home');
+	// loginForm.value?.validateFields().then(async (formValues: any) => {
+	// 	const postData = {
+	// 		user_name: formValues.userName,
+	// 		pass_word: formValues.passWord
+	// 	};
+	// 	const res = await login(postData);
+	// 	if (res.code === 200) {
+	// 		localStorage.setItem('token', res.data.token);
+	// 		router.push('/home');
+	// 	}
+	// });
 	router.push('/home');
 };
 

@@ -3,9 +3,6 @@
 		<h2 v-if="title">{{ title }}</h2>
 		<a-spin wrapperClassName="spinning" :spinning="loading">
 			<slot />
-			<template #indicator>
-				<div class="circle-3"></div>
-			</template>
 		</a-spin>
 	</div>
 </template>
