@@ -188,22 +188,23 @@ const initData = reactive({
 
 const initLoading = ref<boolean>(false);
 const getInitData = async () => {
-	initLoading.value = true;
+	// initLoading.value = true;
 	const res = await getInit();
-	if (res.code === 200) {
-		nextTick(() => {
-			initDataStore.list = res.data.list || [];
-			openRankChart.chart.initChart(res.data.list, 'openrank');
-			deverChart.chart.initChart(res.data.list, 'developer_activity');
-			attentChart.chart.initChart(res.data.list, 'project_attention');
-			projectChart.chart.initChart(res.data.list, 'project_activity');
-			reviewEfficient.chart.initChart(res.data.list);
-			radarFirst.chart.initChart(res.data.list);
-		});
-		initData.openRank = res.data.other.openrankAverage;
-		initData.gitHub = res.data.other.githubAverage;
-	}
-	initLoading.value = false;
+	// 请求数据初始化
+	console.log(res, 'res');
+	nextTick(() => {
+		initDataStore.list = res.data.list || [];
+		openRankChart.chart.initChart(res.data.list, 'openrank');
+		deverChart.chart.initChart(res.data.list, 'developer_activity');
+		attentChart.chart.initChart(res.data.list, 'project_attention');
+		projectChart.chart.initChart(res.data.list, 'project_activity');
+		reviewEfficient.chart.initChart(res.data.list, 'review_efficiency');
+		radarFirst.chart.initChart(res.data.list);
+	});
+	initData.openRank = res.data.other.openrankAverage;
+	initData.gitHub = res.data.other.githubAverage;
+
+	// initLoading.value = false;
 };
 
 onMounted(() => {

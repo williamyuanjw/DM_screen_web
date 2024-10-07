@@ -1,5 +1,6 @@
 module.exports = {
-	root: true,
+	// 关闭所有规则
+	root: false,
 	env: {
 		node: true
 	},

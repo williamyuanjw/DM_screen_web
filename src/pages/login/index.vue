@@ -84,8 +84,7 @@ const addImgCount = () => {
 // 总结来说，这段代码的目的是异步加载两个图片（loginBgImg 和 headerImg），
 // 并在每个图片加载完成后执行一个指定的操作（调用 addImgCount 函数）。
 // 这种技术在网页开发中很常见，用于确保在显示图片之前，图片资源已经被成功加载，
-// 从而避免显示不完整的图片或加载时的闪烁效果。
-
+// 从而避免显示不完整的图片或加载时的烁效果。
 const loadImg = () => {
 	const imgArr = [loginBgImg, headerImg];
 	imgArr.forEach(item => {
@@ -116,18 +115,18 @@ const onFinish = async () => {
 	// 	return;
 	// }
 	// router.push('/home');
-	// loginForm.value?.validateFields().then(async (formValues: any) => {
-	// 	const postData = {
-	// 		user_name: formValues.userName,
-	// 		pass_word: formValues.passWord
-	// 	};
-	// 	const res = await login(postData);
-	// 	if (res.code === 200) {
-	// 		localStorage.setItem('token', res.data.token);
-	// 		router.push('/home');
-	// 	}
-	// });
-	router.push('/home');
+	loginForm.value?.validateFields().then(async (formValues: any) => {
+		const postData = {
+			user_name: formValues.userName,
+			pass_word: formValues.passWord
+		};
+		const res = await login(postData);
+		if (res.code === 200) {
+			localStorage.setItem('token', res.data.token);
+			router.push('/home');
+		}
+	});
+	// router.push('/home');
 };
 
 onMounted(() => {
