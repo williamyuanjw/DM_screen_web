@@ -47,7 +47,7 @@ import { useRouter } from 'vue-router';
 import { login } from './service';
 import headerImg from '@/assets/images/login-header.png';
 import loginBgImg from '@/assets/images/login-bg.jpg';
-import { FormInstance, message } from 'ant-design-vue/es';
+import { FormInstance } from 'ant-design-vue/es';
 
 type FormModel = {
 	userName: string;
@@ -97,7 +97,7 @@ const loadImg = () => {
 };
 
 const formModel = reactive<FormModel>({
-	userName: 'yuan',
+	userName: 'admin',
 	passWord: '123456'
 });
 
@@ -105,28 +105,13 @@ const loginForm = ref<FormInstance>();
 
 // 表单提交
 const onFinish = async () => {
-	// const postData = {
-	// 	username: formModel.userName,
-	// 	password: formModel.passWord
-	// };
-	// const res = await login(postData);
-	// if (res.code == 1) {
-	// 	message.error(res.msg);
-	// 	return;
-	// }
-	// router.push('/home');
-	loginForm.value?.validateFields().then(async (formValues: any) => {
-		const postData = {
-			user_name: formValues.userName,
-			pass_word: formValues.passWord
-		};
-		const res = await login(postData);
-		if (res.code === 200) {
-			localStorage.setItem('token', res.data.token);
-			router.push('/home');
-		}
-	});
-	// router.push('/home');
+	const postData = {
+		username: formModel.userName,
+		password: formModel.passWord
+	};
+	const res = await login(postData);
+	if (res.code === 1) return;
+	router.push('/home');
 };
 
 onMounted(() => {

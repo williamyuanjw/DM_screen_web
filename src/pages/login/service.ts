@@ -7,11 +7,9 @@ interface CommResponse {
 }
 
 interface LoginResponse extends CommResponse {
-	data: {
-		token: string;
-	};
+	msg: string;
 }
 
-export const login = (params: { username: string; password: number }) => {
-	return resquet.post<LoginResponse>('/common/login', params);
+export const login = (params: { username: string; password: string }) => {
+	return resquet.post<LoginResponse>('/login', params);
 };

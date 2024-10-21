@@ -6,9 +6,9 @@ import { message } from 'ant-design-vue';
 const env = import.meta.env.DEV;
 const defaultContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 const service = axios.create({
-	baseURL: '/', // api的base_url
+	baseURL: 'http://localhost:3000', // api的base_url
 	timeout: 50000, // 请求超时时间
-	withCredentials: true, // 跨域携带cookie
+	// withCredentials: true, // 跨域携带cookie
 	validateStatus: (status: number) => {
 		return status >= 200 && status <= 500;
 	}
@@ -82,7 +82,8 @@ service.interceptors.response.use(
 		}
 
 		if (data.code !== 200) {
-			return Promise.reject(data);
+			message.error(dataMessage);
+			return Promise.resolve(data);
 		}
 		return data;
 	},
