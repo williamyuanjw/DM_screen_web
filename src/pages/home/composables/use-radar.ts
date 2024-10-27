@@ -1,6 +1,6 @@
 import { ref, reactive, shallowRef, watch } from 'vue';
 import echarts from '@/echarts';
-import { EChartsOption, RadarSeriesOption } from 'echarts';
+import { EChartsOption } from 'echarts';
 import { EChartsType } from 'echarts/core';
 import type { RadarChartType } from '../data';
 
@@ -10,11 +10,10 @@ import ThemeColor from '@/themeColor';
 import useGithubStore from '@/store/github';
 import { message } from 'ant-design-vue';
 import { RadarOption } from 'echarts/types/dist/shared';
-import { GitHubItem } from './use-github';
+// import { GitHubItem } from './use-github';
 
 export default function (): RadarChartType {
 	const githubStore = useGithubStore();
-
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<RadarChartType['chart']>({
@@ -25,9 +24,9 @@ export default function (): RadarChartType {
 	});
 
 	const indicator = ref<RadarOption['indicator']>([
-		{ name: 'Influence', max: 120 },
-		{ name: 'Response', max: 120 },
-		{ name: 'Activity', max: 120 },
+		{ name: 'start', max: 120 },
+		{ name: 'fork', max: 120 },
+		{ name: 'rank', max: 120 },
 		{ name: 'Trend', max: 120 },
 		{ name: 'GitHub', max: 120 }
 	]);
@@ -37,21 +36,27 @@ export default function (): RadarChartType {
 	function getOption() {
 		const option: EChartsOption = {
 			tooltip: {
+				// 是否将 tooltip 框限制在图表的区域内。
 				confine: true,
+				// 				触发类型。数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用。
 				trigger: 'item',
+				// 提示框触发的条件，可选：'mousemove' | 'click' | 'mousemove|click' | 'none' | 'auto'
 				triggerOn: 'click',
+				// 鼠标是否可进入提示框浮层中，默认为false，如需详情内交互，如添加链接，按钮，可设置为 true。
 				enterable: true,
 				className: 'tooltip-review',
-				position: function (pos, _params, _dom, _rect, size) {
-					// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-					let obj: any = { top: 60 };
-					obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
-					return obj;
-				},
+				// 提示框浮层的位置，默认不设置时位置会跟随鼠标的位置。
+				// position: function (pos, _params, _dom, _rect, size) {
+				// 	// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+				// 	let obj: any = { top: 60 };
+				// 	obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+				// 	return obj;
+				// },
 				textStyle: {
 					fontSize: getHtmlFontPX(0.75)
 				},
-				formatter: (params: any) => {
+				// 提示框浮层内容格式器，支持字符串模板和回调函数两种形式。
+				formatter: (params: any): string => {
 					let resStr: string = `<div class="tooltip-title">${params.name}</div>`;
 					params.value.forEach((item: any, index: number) => {
 						resStr += `
@@ -72,6 +77,7 @@ export default function (): RadarChartType {
 			},
 			color: colorList,
 			radar: {
+				shape: 'circle',
 				axisName: {
 					color: ThemeColor.chartFontColor,
 					fontSize: getHtmlFontPX(0.75)
@@ -80,16 +86,27 @@ export default function (): RadarChartType {
 			},
 			series: {
 				symbolSize: 10,
+				// 线宽
 				lineStyle: {
 					width: 3
 				},
 				emphasis: {
 					lineStyle: {
+						// 线宽
 						width: 5
 					}
 				},
 				type: 'radar',
-				data: []
+				data: [
+					{
+						value: [100, 20, 100, 50, 90],
+						name: 'Allocated Budget'
+					},
+					{
+						value: [110, 10, 90, 40, 50],
+						name: 'Actual Spending'
+					}
+				]
 			}
 		};
 		return option;
@@ -114,28 +131,26 @@ export default function (): RadarChartType {
 			indicator.value![index].max = +maxObj[key] + 20;
 		});
 	}
-
 	/**
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: GitHubItem[]): any {
+	function initChart(): any {
 		if (!container.value) return;
-
-		const radarData: RadarSeriesOption['data'] = [];
-		nodes &&
-			nodes.forEach((item: any) => {
-				chart.selectValue.push(item);
-				const obj = {
-					value: [+item.influence, +item.response, +item.activity, +item.trend, +item.github],
-					name: item.name,
-					areaStyle: { opacity: 0.4 }
-				};
-				radarData.push(obj);
-			});
-		calcMax();
+		// const radarData: RadarSeriesOption['data'] = [];
+		// nodes &&
+		// 	nodes.forEach((item: any) => {
+		// 		chart.selectValue.push(item);
+		// 		const obj = {
+		// 			value: [+item.influence, +item.response, +item.activity, +item.trend, +item.github],
+		// 			name: item.name,
+		// 			areaStyle: { opacity: 0.4 }
+		// 		};
+		// 		radarData.push(obj);
+		// 	});
+		// calcMax();
 		const option = getOption();
-		(option.series as RadarSeriesOption).data?.push(...radarData);
+		// (option.series as RadarSeriesOption).data?.push(...radarData);
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}

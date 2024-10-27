@@ -2,7 +2,7 @@
 	<div class="login">
 		<transition-loading :isShow="loadShow" />
 
-		<div class="login-header">开源数据发展趋势仪表盘</div>
+		<div class="login-header">Github社区活跃度可视化</div>
 
 		<a-form :model="formModel" ref="loginForm" class="login-form" :rules="rules">
 			<a-form-item name="userName">
@@ -48,6 +48,7 @@ import { login } from './service';
 import headerImg from '@/assets/images/login-header.png';
 import loginBgImg from '@/assets/images/login-bg.jpg';
 import { FormInstance } from 'ant-design-vue/es';
+import { message } from 'ant-design-vue';
 
 type FormModel = {
 	userName: string;
@@ -75,6 +76,7 @@ const router = useRouter();
 const loadShow = ref<boolean>(true);
 const imgCount = 2;
 let curCount = 0;
+
 const addImgCount = () => {
 	curCount++;
 	if (curCount === imgCount) {
@@ -112,6 +114,7 @@ const onFinish = async () => {
 	const res = await login(postData);
 	if (res.code === 1) return;
 	router.push('/home');
+	message.success('登录成功');
 };
 
 onMounted(() => {

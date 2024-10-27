@@ -82,12 +82,13 @@ service.interceptors.response.use(
 		}
 
 		if (data.code !== 200) {
-			message.error(dataMessage);
+			// message.error(dataMessage);
 			return Promise.resolve(data);
 		}
 		return data;
 	},
 	(error: AxiosError) => {
+		message.error(error.message);
 		return Promise.reject(error);
 	}
 );

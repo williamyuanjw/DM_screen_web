@@ -23,8 +23,8 @@ const props = defineProps({
 	}
 });
 
-const renderOpen = ref<number>(0);
-const renderGit = ref<number>(0);
+const renderOpen = ref<number | string>(props.initData.openRank);
+const renderGit = ref<number | string>(props.initData.gitHub);
 
 watch(
 	() => props.initData,

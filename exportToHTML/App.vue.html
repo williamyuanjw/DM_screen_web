@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>App.vue</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #d5b778;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bababa;}
+.s3 { color: #6aab73;}
+.s4 { color: #cf8e6d;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+App.vue</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;template&gt;</span>
+	<span class="s0">&lt;ConfigProvider </span><span class="s2">:locale</span><span class="s3">=&quot;</span><span class="s1">zhCN</span><span class="s3">&quot;</span><span class="s0">&gt;</span>
+		<span class="s0">&lt;router-view /&gt;</span>
+	<span class="s0">&lt;/ConfigProvider&gt;</span>
+<span class="s0">&lt;/template&gt;</span>
+<span class="s0">&lt;script </span><span class="s2">setup lang</span><span class="s3">=&quot;ts&quot;</span><span class="s0">&gt;</span>
+<span class="s4">import </span><span class="s1">zhCN from </span><span class="s3">'ant-design-vue/es/locale/zh_CN'</span><span class="s1">;</span>
+<span class="s4">import </span><span class="s1">dayjs from </span><span class="s3">'dayjs'</span><span class="s1">;</span>
+<span class="s4">import </span><span class="s3">'dayjs/locale/zh-cn'</span><span class="s1">;</span>
+
+<span class="s1">dayjs.locale(</span><span class="s3">'zh-cn'</span><span class="s1">);</span>
+<span class="s0">&lt;/script&gt;</span>
+
+<span class="s0">&lt;style </span><span class="s2">scoped lang</span><span class="s3">=&quot;scss&quot;</span><span class="s0">&gt;&lt;/style&gt;</span>
+</pre>
+</body>
+</html>

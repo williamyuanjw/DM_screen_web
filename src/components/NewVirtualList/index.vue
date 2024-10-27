@@ -13,7 +13,6 @@
 					<slot name="item" :item="i"></slot>
 				</div>
 			</div>
-
 			<div class="fs-estimated-virtuallist-list" :style="scrollStyle2">
 				<div class="fs-estimated-virtuallist-list-item" v-for="i in virList" :key="i.project_id">
 					<slot name="item" :item="i"></slot>

@@ -1,5 +1,6 @@
 module.exports = {
 	// 关闭所有规则
+	lintOnSave: false,
 	root: false,
 	env: {
 		node: true

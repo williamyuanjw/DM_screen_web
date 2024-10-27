@@ -38,19 +38,19 @@ export const titleList: TitltListItem[] = [
 		width: '20%'
 	},
 	{
-		label: '影响力',
+		label: '排名',
 		width: '16%'
 	},
 	{
-		label: '发展趋势',
+		label: 'start数量',
 		width: '16%'
 	},
 	{
-		label: '社区反应',
+		label: 'fork数量',
 		width: '16%'
 	},
 	{
-		label: '开发活跃度',
+		label: '语言',
 		width: '16%'
 	},
 	{

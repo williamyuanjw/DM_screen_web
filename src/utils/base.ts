@@ -49,7 +49,6 @@ export const getHtmlFontPX = (remValue: number) => {
 	const fontSize = window.getComputedStyle(document.documentElement, null).fontSize.replace('px', '');
 	return Number(fontSize) * remValue + 'px';
 };
-
 /**
  * @description 处理图表resize
  * @returns HTML元素上的fontSize设置

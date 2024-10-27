@@ -1,7 +1,6 @@
 <template>
 	<div class="home">
 		<transition-loading :isShow="loadShow" />
-
 		<div class="chart-list">
 			<home-header />
 			<div style="padding: 0 8px" class="chart-content">
@@ -77,6 +76,7 @@
 									<div :ref="deverChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
+
 							<a-col class="chart-content-right-item" :span="24">
 								<ModuleItem title="项目活跃度" :loading="initLoading">
 									<div :ref="projectChart.container" class="chart-container"></div>
@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { debounce } from 'lodash';
 
 import indexImg from '@/assets/images/index-bg.png';
@@ -137,10 +137,8 @@ const projectChart = useOpenRank({ showHandler: chartModalData.changeVisible, ty
 const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
 const github = useGithub();
 const radarFirst = useRadar();
-
 const optionStore = useOptionStore();
 const initDataStore = useInitData();
-
 /**
  * @description 处理全部图表的缩放
  */
@@ -151,7 +149,7 @@ const chartResize = debounce(() => {
 	deverChart.chart.resizeChart();
 	attentChart.chart.resizeChart();
 	projectChart.chart.resizeChart();
-}, 500);
+});
 
 const loadShow = ref<boolean>(true);
 const imgCount = 6;
@@ -182,8 +180,8 @@ const getOptionsData = async () => {
 };
 
 const initData = reactive({
-	openRank: 0,
-	gitHub: 0
+	openRank: 20.1,
+	gitHub: 20
 });
 
 const initLoading = ref<boolean>(false);
@@ -203,6 +201,7 @@ const getInitData = async () => {
 	// initData.openRank = res.data.other.openrankAverage;
 	// initData.gitHub = res.data.other.githubAverage;
 	reviewEfficient.chart.initChart();
+	radarFirst.chart.initChart()
 	// initLoading.value = false;
 };
 
