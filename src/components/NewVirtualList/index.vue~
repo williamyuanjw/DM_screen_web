@@ -139,6 +139,7 @@ function rafThrottle(fn: Function) {
 }
 
 const handleScroll = rafThrottle(() => {
+
 	let { scrollTop } = contentRef.value!;
 	state.startIndex = Math.floor(scrollTop / state.itemHeight);
 	if (renderList.value.length === 0) {

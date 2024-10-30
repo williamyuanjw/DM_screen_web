@@ -28,6 +28,7 @@
 								<ModuleItem :loading="initLoading">
 									<div class="index-data">
 										<index-num :initData="initData" />
+<!--										雷达图-->
 										<radar-list :radarFirst="radarFirst" />
 									</div>
 								</ModuleItem>
@@ -39,20 +40,22 @@
 										<new-virtual-list
 											:data-source="github.dataSource"
 											:loading="github.loading"
-											@scroll-end="github.addData"
 											class="virtual-list"
 										>
+<!--                     <!-具名插槽&ndash;&gt;-->
 											<template #item="{ item }">
+<!--												文字提示-->
 												<a-tooltip placement="top" color="rgba(73, 146, 255, 0.8)">
 													<template #title>
-														<span>项目名：{{ item.name }}</span>
+														<span>项目名：{{ item.title }}</span>
 													</template>
-													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item.name)">
-														<span class="virtual-list-item-col">{{ item.name }}</span>
-														<span class="virtual-list-item-col">{{ item.influence }}</span>
-														<span class="virtual-list-item-col">{{ item.trend }}</span>
-														<span class="virtual-list-item-col">{{ item.response }}</span>
-														<span class="virtual-list-item-col">{{ item.activity }}</span>
+<!--													底部滚动区域-->
+													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item)">
+														<span class="virtual-list-item-col">{{ item.title }}</span>
+														<span class="virtual-list-item-col">{{ item.rank }}</span>
+														<span class="virtual-list-item-col">{{ item.star }}</span>
+														<span class="virtual-list-item-col">{{ item.fork }}</span>
+														<span class="virtual-list-item-col">{{ item.language }}</span>
 														<span class="virtual-list-item-col">{{ item.github }}</span>
 													</div>
 												</a-tooltip>
@@ -99,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import {nextTick, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
 import { debounce } from 'lodash';
 
 import indexImg from '@/assets/images/index-bg.png';
@@ -127,7 +130,7 @@ import useInitData from '@/store/initData';
 
 import { titleList, leftRightCol, centerCol } from './config';
 
-import { getInit, getOptions } from './service';
+import { getInit, getOptions,getProjectList } from './service';
 
 const chartModalData = useChartModal();
 const openRankChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 2 });
@@ -186,7 +189,7 @@ const initData = reactive({
 
 const initLoading = ref<boolean>(false);
 const getInitData = async () => {
-	// initLoading.value = true;
+	initLoading.value = true;
 	// const res = await getInit();
 	// // 请求数据初始化
 	// nextTick(() => {
@@ -200,9 +203,20 @@ const getInitData = async () => {
 	// });
 	// initData.openRank = res.data.other.openrankAverage;
 	// initData.gitHub = res.data.other.githubAverage;
-	reviewEfficient.chart.initChart();
-	radarFirst.chart.initChart()
-	// initLoading.value = false;
+	try{
+		const res=await getProjectList()
+  // 数据初始化
+		nextTick(() => {
+			github.dataSource=res.data.trendingList
+		})
+	}catch (error) {
+
+	}finally {
+		reviewEfficient.chart.initChart();
+		radarFirst.chart.initChart();
+		github.loading=false
+		initLoading.value = false;
+	}
 };
 
 onMounted(() => {

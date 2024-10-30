@@ -27,18 +27,20 @@ export default function (): RadarChartType {
 		{ name: 'start', max: 120 },
 		{ name: 'fork', max: 120 },
 		{ name: 'rank', max: 120 },
-		{ name: 'Trend', max: 120 },
-		{ name: 'GitHub', max: 120 }
+		// { name: 'Trend', max: 120 },
+		// { name: 'GitHub', max: 120 }
 	]);
 	/**
 	 * @returns 返回option配置
 	 */
+
 	function getOption() {
 		const option: EChartsOption = {
+
 			tooltip: {
 				// 是否将 tooltip 框限制在图表的区域内。
 				confine: true,
-				// 				触发类型。数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用。
+				// 	触发类型。数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用。
 				trigger: 'item',
 				// 提示框触发的条件，可选：'mousemove' | 'click' | 'mousemove|click' | 'none' | 'auto'
 				triggerOn: 'click',
@@ -75,6 +77,7 @@ export default function (): RadarChartType {
 					return resStr;
 				}
 			},
+
 			color: colorList,
 			radar: {
 				shape: 'circle',
@@ -149,6 +152,7 @@ export default function (): RadarChartType {
 		// 		radarData.push(obj);
 		// 	});
 		// calcMax();
+
 		const option = getOption();
 		// (option.series as RadarSeriesOption).data?.push(...radarData);
 		chartRef.value = echarts.init(container.value);
@@ -179,6 +183,7 @@ export default function (): RadarChartType {
 	 * @description 雷达图添加
 	 */
 	function addRadarData(name: string) {
+		console.log(name)
 		if (chart.selectValue.find(item => item.name === name)) {
 			return message.warning('不能重复添加');
 		}
@@ -186,22 +191,31 @@ export default function (): RadarChartType {
 		if (chart.selectValue.length >= 5) {
 			return message.warning('最多添加5项');
 		}
+		const obj={
+			value: [100, 20, 100, 50, 90],
 
-		const item = githubStore.list.find(item => item.name === name)!;
-		const obj = {
-			value: [item.influence, item.response, item.activity, item.trend, item.github],
-			name: item.name,
-			areaStyle: { opacity: 0.2 }
-		};
-		const curOptions = chartRef.value?.getOption();
-
-		if (curOptions && Array.isArray(curOptions.series)) {
-			chart.selectValue.push(item);
-			curOptions.series[0].data.push(obj);
-			calcMax();
-			(curOptions.radar as any)[0].indicator = indicator.value;
-			chartRef.value?.setOption(curOptions);
+			name:'rem'
 		}
+		const curOption=chartRef.value?.getOption()
+		curOption.series[0].data.push(obj)
+
+		console.log(curOption)
+
+		// const item = githubStore.list.find(item => item.name === name)!;
+		// const obj = {
+		// 	value: [item.influence, item.response, item.activity, item.trend, item.github],
+		// 	name: item.name,
+		// 	areaStyle: { opacity: 0.2 }
+		// };
+		// const curOptions = chartRef.value?.getOption();
+		//
+		// if (curOptions && Array.isArray(curOptions.series)) {
+		// 	chart.selectValue.push(item);
+		// 	curOptions.series[0].data.push(obj);
+		// 	calcMax();
+		// 	(curOptions.radar as any)[0].indicator = indicator.value;
+		// 	chartRef.value?.setOption(curOptions);
+		// }
 	}
 
 	watch(
@@ -232,3 +246,8 @@ export default function (): RadarChartType {
 		getOption
 	};
 }
+
+
+
+
+
