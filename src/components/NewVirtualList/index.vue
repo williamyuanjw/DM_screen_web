@@ -13,6 +13,7 @@
 					<slot name="item" :item="i"></slot>
 				</div>
 			</div>
+
 			<div class="fs-estimated-virtuallist-list" :style="scrollStyle2">
 				<div class="fs-estimated-virtuallist-list-item" v-for="i in virList" :key="i.project_id">
 					<slot name="item" :item="i"></slot>
@@ -24,7 +25,7 @@
 
 <script setup lang="ts">
 import { type CSSProperties, computed, onMounted, reactive, ref, watch, PropType, nextTick } from 'vue';
-import type { IPosInfo, VirtualStateType } from './data';
+import type { VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
 import { GitHubItem } from '@/pages/home/composables/use-github';
 import { debounce } from 'lodash';
@@ -50,7 +51,7 @@ const listRef = ref<HTMLDivElement>();
 
 const itemRef = ref<HTMLDivElement[]>();
 
-const positions = ref<IPosInfo[]>([]);
+// const positions = ref<IPosInfo[]>([]);
 
 const state = reactive<VirtualStateType>({
 	viewHeight: 0,
@@ -61,7 +62,7 @@ const state = reactive<VirtualStateType>({
 	rafTimer: null,
 	isHover: false
 });
-
+// 输出最小值
 const endIndex = computed(() => Math.min(propList.value.length, state.startIndex + state.maxCount));
 
 const renderList = computed(() => propList.value.slice(state.startIndex, endIndex.value));
@@ -75,7 +76,6 @@ const scrollStyle = computed(
 			transform: `translate3d(0, ${state.itemHeight * state.startIndex}px, 0)`
 		} as CSSProperties)
 );
-
 const scrollStyle2 = computed(
 	() =>
 		({
@@ -140,6 +140,7 @@ function rafThrottle(fn: Function) {
 
 const handleScroll = rafThrottle(() => {
 	let { scrollTop } = contentRef.value!;
+	// 计算启示索引  容器滚动的高度/单个数据的高度
 	state.startIndex = Math.floor(scrollTop / state.itemHeight);
 	if (renderList.value.length === 0) {
 		contentRef.value!.scrollTop = 0;
@@ -183,7 +184,7 @@ const handleSetPosition = () => {
 
 /**
  * @description 监听容器宽高变化
- */
+ * */
 const observeContent = () => {
 	if (contentRef.value) {
 		const observer = new ResizeObserver(debounce(handleSetPosition, 300));

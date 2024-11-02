@@ -22,7 +22,6 @@ type GitHubType = {
 
 export default function (): GitHubType {
 	// const githubStore = useGithubStore();
-
 	const addData = () => {
 		// 分页操作
 		// if (github.dataSource.length < github.total || github.dataSource.length === 0) {
@@ -45,7 +44,6 @@ export default function (): GitHubType {
 		// 		});
 		// }
 	};
-
 	const github = reactive<GitHubType>({
 		loading: true,
 		dataSource: [],
@@ -54,6 +52,5 @@ export default function (): GitHubType {
 		page_size: 25,
 		total: 0
 	});
-
 	return github;
 }
