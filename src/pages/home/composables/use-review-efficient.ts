@@ -1,11 +1,12 @@
 import { ref, reactive, shallowRef } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption, EChartsOption } from 'echarts';
+import { PieSeriesOption } from 'echarts';
 import { EChartsType } from 'echarts/core';
 import type { LineChartType, MuSelectValueType } from '../data';
 
-import { handleChartResize } from '@/utils/base';
-
+import { handleChartResize, handleTimerType } from '@/utils/base';
+import { getCommits } from '../service';
+import { message } from 'ant-design-vue';
 export default function (
 	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void
 ): LineChartType {
@@ -24,73 +25,45 @@ export default function (
 	 */
 	function getOption() {
 		// 浅合并
-	 const option = {
+		const option = {
 			xAxis: {
 				type: 'category',
-				data: ['2024/7/21', '2024/7/22', '2024/7/23', '2024/7/25', '2024/9/21', '2024/7/21', '2024/12/21', '2024/7/23', '2024/7/25', '2024/9/21', '2024/7/21', '2024/12/21']
+				data: ['2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1']
 			},
 			tooltip: {
 				formatter: function (name) {
-					return `commit：${name.value}`;
+
+					return `commit：${name.value}`
 				}
 			},
 			yAxis: {
 				type: 'value'
 			},
-			series: [
-				{
-					data: [9, 28, 82, 38, 17, 17, 45, 23, 28, 21, 9, 26, 14, 3],
-					type: 'line'
-				}
-			]
+			series: {
+				data: [],
+				type: 'line'
+			}
 		};
 		return Object.assign(option, chart.extraOption);
 	}
-
 	/**
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: PieSeriesOption['data']): any {
+	async function initChart(): Promise<void> {
 		if (!container.value) return;
-		// 请求成功后接收到的数据 处理
-		// const reviewData: EChartsCoreOption[] = [];
-		// nodes &&
-		// 	nodes.forEach((item: any) => {
-		// 		const reviewsArr: DateItem = [];
-		// 		const timeArr: DateItem = [];
-		// 		dateList.forEach(key => {
-		// 			reviewsArr.push([key, item['pr_reviews'][key] || 0]);
-		// 		});
-		// 		dateList.forEach(key => {
-		// 			timeArr.push([key, item['pr_response_time'][key] || 0]);
-		// 		});
-		// 		const reviewsObj = {
-		// 			name: item.name,
-		// 			type: 'bar',
-		// 			symbol: 'circle',
-		// 			smooth: true,
-		// 			symbolSize: 8,
-		// 			showSymbol: false,
-		// 			data: reviewsArr
-		// 		};
-		// 		const timeObj = {
-		// 			name: item.name,
-		// 			yAxisIndex: 1,
-		// 			type: 'line',
-		// 			symbol: 'circle',
-		// 			smooth: true,
-		// 			symbolSize: 8,
-		// 			areaStyle: {
-		// 				opacity: 0.4
-		// 			},
-		// 			showSymbol: false,
-		// 			data: timeArr
-		// 		};
-		// 		reviewData.push(reviewsObj, timeObj);
-		// 	});
 		const option = getOption();
-		// option.series = reviewData;
+		try {
+			const res = await getCommits();
+			// res.data.columnDate.forEach(item => {
+			// 	return handleTimerType(item);
+			// });
+			let map = res.data.columnDate.map(v => handleTimerType(v));
+			option.xAxis.data = map
+			option.series.data = res.data.commit;
+		} catch (error) {
+			message.error(error as unknown as string);
+		}
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
@@ -107,9 +80,10 @@ export default function (
 	/**
 	 * @description 处理图表resize
 	 */
-	function resizeChart() {
+	function resizeChart(): void {
 		if (chartRef.value) {
 			handleChartResize(chartRef.value);
+			initChart();
 			resetFontSize();
 		}
 	}
@@ -117,13 +91,13 @@ export default function (
 	/**
 	 * @description 自定义toolbox restore方法
 	 */
-	// function handleRestore() {
-	// 	const option = getOption();
-	// 	if (chartRef.value) {
-	// 		chartRef.value.clear();
-	// 		chartRef.value.setOption(option);
-	// 	}
-	// }
+	function handleRestore() {
+		const option = getOption();
+		if (chartRef.value) {
+			chartRef.value.clear();
+			chartRef.value.setOption(option);
+		}
+	}
 
 	return {
 		chart,

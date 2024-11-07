@@ -18,3 +18,7 @@ export const getProjectData = (params: { type: string; project_id: number }) => 
 export  const getProjectList = () => {
 	return GET('/getGithub');
 }
+export const getCommits=()=>{
+	return GET('/codeCommit');
+}
+

@@ -62,3 +62,14 @@ export const handleChartResize = (chartRef: EChartsType) => {
 			}
 		});
 };
+/**
+ * @description 对时间格式进行处理
+ * @param time
+ *
+ */
+export const handleTimerType=(time:string)=>{
+	  const data=new Date(time)
+	  return data.toLocaleDateString('zh-CN');
+}
+
+
