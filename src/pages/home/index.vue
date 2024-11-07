@@ -10,7 +10,7 @@
 					<a-col v-bind="leftRightCol" class="chart-content-col">
 						<a-row class="chart-content-left">
 							<a-col class="chart-content-left-item" :span="24">
-								<ModuleItem title="PR处理效率" :loading="initLoading">
+								<ModuleItem title="过去12个月的Commit提交数" :loading="initLoading">
 									<div :ref="reviewEfficient.container" class="chart-container" />
 								</ModuleItem>
 							</a-col>

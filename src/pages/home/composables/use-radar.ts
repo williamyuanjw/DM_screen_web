@@ -26,7 +26,7 @@ export default function (): RadarChartType {
 	const indicator = ref<RadarOption['indicator']>([
 		{ name: 'start', max: 120 },
 		{ name: 'fork', max: 120 },
-		{ name: 'rank', max: 120 },
+		{ name: 'rank', max: 120 }
 		// { name: 'Trend', max: 120 },
 		// { name: 'GitHub', max: 120 }
 	]);
@@ -36,7 +36,6 @@ export default function (): RadarChartType {
 
 	function getOption() {
 		const option: EChartsOption = {
-
 			tooltip: {
 				// 是否将 tooltip 框限制在图表的区域内。
 				confine: true,
@@ -48,12 +47,12 @@ export default function (): RadarChartType {
 				enterable: true,
 				className: 'tooltip-review',
 				// 提示框浮层的位置，默认不设置时位置会跟随鼠标的位置。
-				// position: function (pos, _params, _dom, _rect, size) {
-				// 	// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-				// 	let obj: any = { top: 60 };
-				// 	obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
-				// 	return obj;
-				// },
+				position: function (pos, _params, _dom, _rect, size) {
+					// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
+					let obj: any = { top: 60 };
+					obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+					return obj;
+				},
 				textStyle: {
 					fontSize: getHtmlFontPX(0.75)
 				},
@@ -65,15 +64,16 @@ export default function (): RadarChartType {
 						<div class="tooltip-item">
 							<div class="tooltip-label-icon">
 								<div class="tooltip-icon" style="background-color: ${params.color}"></div>
-								<div class="tooltip-label">${indicator.value![index].name}：</div>
+								<div class="tooltip-label">${indicator.value![index]}：</div>
 							</div>
 							<span class="tooltip-value">${item}</span>
 						</div>
 						`;
 					});
-					resStr += `
-						<div class="tooltip-btn" id="radar-remove" data-id="${params.name}">remove</div>
-					`;
+					// remove
+					// resStr += `
+					// 	<div class="tooltip-btn" id="radar-remove" data-id="${params}">remove</div>
+					// `;
 					return resStr;
 				}
 			},
@@ -102,11 +102,11 @@ export default function (): RadarChartType {
 				type: 'radar',
 				data: [
 					{
-						value: [100, 20, 100, 50, 90],
+						value: [100, 20, 100],
 						name: 'Allocated Budget'
 					},
 					{
-						value: [110, 10, 90, 40, 50],
+						value: [110, 10, 90],
 						name: 'Actual Spending'
 					}
 				]
@@ -183,7 +183,7 @@ export default function (): RadarChartType {
 	 * @description 雷达图添加
 	 */
 	function addRadarData(name: string) {
-		console.log(name)
+		console.log(name);
 		if (chart.selectValue.find(item => item.name === name)) {
 			return message.warning('不能重复添加');
 		}
@@ -191,15 +191,15 @@ export default function (): RadarChartType {
 		if (chart.selectValue.length >= 5) {
 			return message.warning('最多添加5项');
 		}
-		const obj={
+		const obj = {
 			value: [100, 20, 100, 50, 90],
 
-			name:'rem'
-		}
-		const curOption=chartRef.value?.getOption()
-		curOption.series[0].data.push(obj)
+			name: 'rem'
+		};
+		const curOption = chartRef.value?.getOption();
+		curOption.series[0].data.push(obj);
 
-		console.log(curOption)
+		console.log(curOption);
 
 		// const item = githubStore.list.find(item => item.name === name)!;
 		// const obj = {
@@ -246,8 +246,3 @@ export default function (): RadarChartType {
 		getOption
 	};
 }
-
-
-
-
-

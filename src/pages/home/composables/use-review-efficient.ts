@@ -24,17 +24,22 @@ export default function (
 	 */
 	function getOption() {
 		// 浅合并
-		const option = {
+	 const option = {
 			xAxis: {
 				type: 'category',
-				data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+				data: ['2024/7/21', '2024/7/22', '2024/7/23', '2024/7/25', '2024/9/21', '2024/7/21', '2024/12/21', '2024/7/23', '2024/7/25', '2024/9/21', '2024/7/21', '2024/12/21']
+			},
+			tooltip: {
+				formatter: function (name) {
+					return `commit：${name.value}`;
+				}
 			},
 			yAxis: {
 				type: 'value'
 			},
 			series: [
 				{
-					data: [150, 230, 224, 218, 135, 147, 260],
+					data: [9, 28, 82, 38, 17, 17, 45, 23, 28, 21, 9, 26, 14, 3],
 					type: 'line'
 				}
 			]
@@ -85,7 +90,6 @@ export default function (
 		// 		reviewData.push(reviewsObj, timeObj);
 		// 	});
 		const option = getOption();
-		console.log(option);
 		// option.series = reviewData;
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
