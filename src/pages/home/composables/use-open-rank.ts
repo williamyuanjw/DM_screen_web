@@ -1,12 +1,12 @@
 import { ref, reactive, shallowRef } from 'vue';
-import echarts from '@/echarts';
 import { PieSeriesOption, EChartsOption } from 'echarts';
-import { EChartsType, EChartsCoreOption } from 'echarts/core';
-import type { DateItem, LineChartType, MuSelectValueType, intervalMapType } from '../data';
+import echarts from '@/echarts';
 
-import { getHtmlFontPX, handleChartResize } from '@/utils/base';
+import { EChartsType } from 'echarts/core';
+import type { LineChartType, MuSelectValueType, intervalMapType } from '../data';
+import { getHtmlFontPX, handleChartResize, handleTimerType } from '@/utils/base';
 import ThemeColor from '@/themeColor';
-import { colorList, dateList } from '../config';
+import { colorList } from '../config';
 
 export default function (props?: {
 	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void;
@@ -21,181 +21,144 @@ export default function (props?: {
 		extraOption: {}
 	});
 
-	const intervalMap: intervalMapType = {
-		openrank: {
-			interval: 200,
-			type: 'line'
-		},
-		project_attention: {
-			interval: 200,
-			type: 'bar'
-		},
-		developer_activity: {
-			interval: 30,
-			type: 'line'
-		},
-		project_activity: {
-			interval: 400,
-			type: 'line'
-		}
-	};
-
 	/**
 	 * @returns 返回option配置
 	 */
-	function getOption() {
-		const option: EChartsOption = {
-			color: colorList,
-			textStyle: {
-				color: ThemeColor.chartFontColor
-			},
-
+	function getOption(time: Array<string>) {
+		let option :EChartsOption= {
 			tooltip: {
-				confine: true,
-				axisPointer: {
-					lineStyle: {
-						width: 2,
-						color: '#ffeb7b'
-					}
-				},
-				className: 'tooltip-review',
-				formatter: (params: any) => {
-					let resStr: string = `<div>${params[0].axisValueLabel}</div>`;
-					params.forEach((item: any) => {
-						resStr += `
-						<div class="tooltip-item">
-							<div class="tooltip-label-icon">
-								<span class="tooltip-icon" style="background-color: ${item.color}"></span>
-								<span class="tooltip-label">${item.seriesName}：</span>
-							</div>
-							<span class="tooltip-value">${item.value[1]}</span>
-						</div>
-						`;
-					});
-					return resStr;
-				},
-				position: function (pos, _params, _dom, _rect, size) {
-					// 鼠标在左侧时 tooltip 显示到右侧，鼠标在右侧时 tooltip 显示到左侧。
-					let obj: any = { top: 60 };
-					obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
-					return obj;
-				},
-				// 通过坐标轴来触发
 				trigger: 'axis',
-				textStyle: {
-					fontSize: getHtmlFontPX(0.75)
+				axisPointer: {
+					animation: false,
+					snap: true
 				}
 			},
-			// containLabel 为 true 的时候：
-			// grid.left grid.right grid.top grid.bottom grid.width grid.height 决定的是包括了坐标轴标签在内的所有内容所形成的矩形的位置。
-			// 这常用于『防止标签溢出』的场景，标签溢出指的是，标签长度动态变化时，可能会溢出容器或者覆盖其他组件。
-			grid: {
-				top: '20%',
-				left: '5%',
-				right: '5%',
-				bottom: '5%',
-				containLabel: true
+			legend: {
+				data: ['Additions', 'Deletions'],
+				left: 10,
+				textStyle: {
+					color: 'write'
+				}
 			},
 			toolbox: {
-				right: !props?.showHandler ? '2%' : '3%',
-				iconStyle: {
-					borderColor: ThemeColor.chartFontColor
-				},
-				emphasis: {
-					iconStyle: {
-						borderColor: '#ffeb7b'
-					}
-				},
-				itemGap: Number(getHtmlFontPX(0.25).replace('px', '')),
-				itemSize: Number(getHtmlFontPX(0.875).replace('px', '')),
 				feature: {
-					magicType: { type: ['line', 'bar'] },
-					myModal: !props?.showHandler
-						? {}
-						: {
-								title: '详情',
-								icon: 'M391.2 348.6L166.6 124.1h107.6c16.6 0 30-13.4 30-30s-13.4-30-30-30H93.6c-16.3 0.3-29.4 13.6-29.4 30v180c0 16.6 13.4 30 30 30s30-13.4 30-30V166.5l224.6 224.6c11.7 11.7 30.7 11.7 42.4 0 11.7-11.8 11.7-30.8 0-42.5zM348.8 632.8L124.2 857.3V749.7c0-16.6-13.4-30-30-30s-30 13.4-30 30v180.6c0.3 16.3 13.6 29.4 30 29.4h180c16.6 0 30-13.4 30-30s-13.4-30-30-30H166.6l224.6-224.6c11.7-11.7 11.7-30.7 0-42.4-11.7-11.6-30.7-11.6-42.4 0.1zM675.6 391.1l224.6-224.6v107.6c0 16.6 13.4 30 30 30s30-13.4 30-30V93.5c-0.3-16.3-13.6-29.4-30-29.4h-180c-16.6 0-30 13.4-30 30s13.4 30 30 30h107.6L633.2 348.6c-11.7 11.7-11.7 30.7 0 42.4 11.7 11.8 30.7 11.8 42.4 0.1zM633.2 675.2l224.6 224.6H750.2c-16.6 0-30 13.4-30 30s13.4 30 30 30h180.6c16.3-0.3 29.4-13.6 29.4-30v-180c0-16.6-13.4-30-30-30s-30 13.4-30 30v107.6L675.6 632.8c-11.7-11.7-30.7-11.7-42.4 0s-11.7 30.7 0 42.4z',
-								onclick: (_params: any, _class: any, _name: any, e: any) => {
-									// 移动端要取消默认行为不然弹窗会立刻关闭
-									// 阻止touchend后的click事件发生
-									e.event.preventDefault();
-									props.showHandler && props.showHandler(true, props.type, chart.selectValue);
-								}
-						  }
+					dataZoom: {
+						yAxisIndex: 'none'
+					},
+					restore: {},
+					saveAsImage: {}
+				},
+				iconStyle: {
+					color: '#000'
 				}
+			},
+			axisPointer: {
+				link: [
+					{
+						xAxisIndex: 'all'
+					}
+				]
 			},
 			dataZoom: [
 				{
+					show: true,
+					realtime: true,
+					//数据窗口范围的起始百分比。范围是：0 ~ 100。表示 0% ~ 100%。
+					start: 30,
+					end: 70,
+					xAxisIndex: [0, 1]
+				},
+				{
 					type: 'inside',
-					start: 50,
-					end: 100,
-					zoomLock: true
+					realtime: true,
+					start: 30,
+					end: 70,
+					xAxisIndex: [0, 1]
 				}
 			],
-			xAxis: {
-				type: 'category',
-				axisLabel: {
-					fontSize: getHtmlFontPX(0.75)
+			grid: [
+				{
+					left: 60,
+					right: 50,
+					height: '35%'
 				},
-				axisLine: {
-					lineStyle: {
-						color: ThemeColor.chartFontColor
-					}
-				},
-				axisTick: {
-					show: false
+				{
+					left: 60,
+					right: 50,
+					top: '55%',
+					height: '35%'
 				}
-			},
-			series: []
+			],
+			xAxis: [
+				{
+					type: 'category',
+					boundaryGap: false,
+					axisLine: { onZero: true },
+					data: time
+				},
+				{
+					gridIndex: 1,
+					type: 'category',
+					boundaryGap: false,
+					axisLine: { onZero: true },
+					data: time,
+					position: 'top'
+				}
+			],
+			yAxis: [
+				{
+					name: '',
+					type: 'value'
+				},
+				{
+					gridIndex: 1,
+					name: 'Rainfall(mm)',
+					type: 'value',
+					inverse: true
+				}
+			],
+			series: [
+				{
+					name: 'Additions',
+					type: 'line',
+					symbolSize: 8,
+					// prettier-ignore
+					data: []
+				},
+				{
+					name: 'Deletions',
+					type: 'line',
+					xAxisIndex: 1,
+					yAxisIndex: 1,
+					symbolSize: 8,
+					// prettier-ignore
+					data: []
+				}
+			]
 		};
 		// 浅合并
-		return Object.assign(option, chart.extraOption);
+		return Object.assign(option, {});
 	}
 
 	/**
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: PieSeriesOption['data'], type: keyof intervalMapType): any {
+	function initChart(nodes: any): any {
 		if (!container.value) return;
-		const openRankData: EChartsCoreOption[] = [];
-		nodes &&
-			nodes.forEach((item: any) => {
-				const data: DateItem = [];
-				dateList.forEach(key => {
-					data.push([key, item[type][key] || 0]);
-				});
-				const obj = {
-					name: item.name,
-					type: intervalMap[type].type,
-					symbol: 'circle',
-					smooth: true,
-					symbolSize: 8,
-					showSymbol: false,
-					data
-				};
-				openRankData.push(obj);
-			});
-		chart.extraOption = {
-			...chart.extraOption,
-			yAxis: {
-				type: 'value',
-				interval: intervalMap[type].interval,
-				axisLabel: {
-					fontSize: getHtmlFontPX(0.75)
-				},
-				nameTextStyle: {
-					fontSize: getHtmlFontPX(0.75)
-				},
-				splitLine: {
-					lineStyle: {
-						color: ThemeColor.chartFontColor
-					}
-				}
-			}
-		};
-		const option = getOption();
-		option.series = openRankData;
+		// 数据格式处理
+		let DateTime: Array<string> = [];
+		let CommitData: Array<number> = [];
+		let deleteData: Array<number> = [];
+		nodes.data.forEach((v: { DateTime: string; Additions: number; Deletions: number }) => {
+			DateTime.push(handleTimerType(v.DateTime));
+			CommitData.push(v.Additions);
+			deleteData.push(-v.Deletions);
+		});
+		const option = getOption(DateTime);
+		option.series[0].data = CommitData;
+		option.series[1].data = deleteData;
+		console.log(option);
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
@@ -214,6 +177,7 @@ export default function (props?: {
 	 */
 	function resizeChart() {
 		if (chartRef.value) {
+			initChart(null)
 			handleChartResize(chartRef.value);
 			resetFontSize();
 		}
@@ -223,6 +187,6 @@ export default function (props?: {
 		chart,
 		container,
 		chartRef,
-		getOption
-	};
+		initChart
+	}
 }

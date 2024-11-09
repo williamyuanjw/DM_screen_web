@@ -21,4 +21,12 @@ export  const getProjectList = () => {
 export const getCommits=()=>{
 	return GET('/codeCommit');
 }
+/**
+ * @description 过去12个月代码的添加数和删除数
+ * @return Additions
+ * @return Deletions
+ */
+export const getCodeCommit=()=>{
+	return GET('/codeFrequency');
+}
 

@@ -50,17 +50,13 @@ export default function (
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	async function initChart(): Promise<void> {
+	async function initChart(node:any): Promise<void> {
 		if (!container.value) return;
 		const option = getOption();
 		try {
-			const res = await getCommits();
-			// res.data.columnDate.forEach(item => {
-			// 	return handleTimerType(item);
-			// });
-			let map = res.data.columnDate.map(v => handleTimerType(v));
+			let map = node.data.columnDate.map(v => handleTimerType(v));
 			option.xAxis.data = map
-			option.series.data = res.data.commit;
+			option.series.data = node.data.commit;
 		} catch (error) {
 			message.error(error as unknown as string);
 		}
@@ -82,8 +78,8 @@ export default function (
 	 */
 	function resizeChart(): void {
 		if (chartRef.value) {
+			initChart(null);
 			handleChartResize(chartRef.value);
-			initChart();
 			resetFontSize();
 		}
 	}

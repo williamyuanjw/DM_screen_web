@@ -28,7 +28,7 @@
 								<ModuleItem :loading="initLoading">
 									<div class="index-data">
 										<index-num :initData="initData" />
-<!--										雷达图-->
+										<!--										雷达图-->
 										<radar-list :radarFirst="radarFirst" />
 									</div>
 								</ModuleItem>
@@ -37,19 +37,15 @@
 								<ModuleItem title="Github指数" :loading="github.loading">
 									<div class="virtual-list-content">
 										<list-header :titleList="titleList" />
-										<new-virtual-list
-											:data-source="github.dataSource"
-											:loading="github.loading"
-											class="virtual-list"
-										>
-<!--                     <!-具名插槽&ndash;&gt;-->
+										<new-virtual-list :data-source="github.dataSource" :loading="github.loading" class="virtual-list">
+											<!--                     <!-具名插槽&ndash;&gt;-->
 											<template #item="{ item }">
-<!--												文字提示-->
+												<!--												文字提示-->
 												<a-tooltip placement="top" color="rgba(73, 146, 255, 0.8)">
 													<template #title>
 														<span>项目名：{{ item.title }}</span>
 													</template>
-<!--													底部滚动区域-->
+													<!--													底部滚动区域-->
 													<div class="virtual-list-item" @click="radarFirst.chart.addRadarData(item)">
 														<span class="virtual-list-item-col">{{ item.title }}</span>
 														<span class="virtual-list-item-col">{{ item.rank }}</span>
@@ -70,16 +66,15 @@
 					<a-col v-bind="leftRightCol" class="chart-content-col">
 						<a-row class="chart-content-right">
 							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="关注度" :loading="initLoading">
+								<ModuleItem title="vuejs/core" :loading="initLoading">
 									<div :ref="attentChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
-							<a-col class="chart-content-right-item" :span="24">
-								<ModuleItem title="开发者活跃度" :loading="initLoading">
-									<div :ref="deverChart.container" class="chart-container"></div>
-								</ModuleItem>
-							</a-col>
-
+							<!--							<a-col class="chart-content-right-item" :span="24">-->
+							<!--								<ModuleItem title="开发者活跃度" :loading="initLoading">-->
+							<!--									<div :ref="deverChart.container" class="chart-container"></div>-->
+							<!--								</ModuleItem>-->
+							<!--							</a-col>-->
 							<a-col class="chart-content-right-item" :span="24">
 								<ModuleItem title="项目活跃度" :loading="initLoading">
 									<div :ref="projectChart.container" class="chart-container"></div>
@@ -102,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import {nextTick, onBeforeUnmount, onMounted, reactive, ref} from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { debounce } from 'lodash';
 
 import indexImg from '@/assets/images/index-bg.png';
@@ -129,8 +124,8 @@ import useOptionStore from '@/store/option';
 import useInitData from '@/store/initData';
 
 import { titleList, leftRightCol, centerCol } from './config';
-
-import { getInit, getOptions,getProjectList } from './service';
+import { getCodeCommit, getCommits, getOptions, getProjectList } from './service';
+import { message } from 'ant-design-vue';
 
 const chartModalData = useChartModal();
 const openRankChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 2 });
@@ -203,18 +198,22 @@ const getInitData = async () => {
 	// });
 	// initData.openRank = res.data.other.openrankAverage;
 	// initData.gitHub = res.data.other.githubAverage;
-	try{
-		const res=await getProjectList()
-  // 数据初始化
-		nextTick(() => {
-			github.dataSource=res.data.trendingList
-		})
-	}catch (error) {
 
-	}finally {
-		reviewEfficient.chart.initChart();
-		radarFirst.chart.initChart();
-		github.loading=false
+	try {
+		const res = await getCommits();
+		const result = await getProjectList();
+		const result1 = await getCodeCommit();
+		// 数据初始化
+		nextTick(() => {
+			github.dataSource = result.data.trendingList;
+			reviewEfficient.chart.initChart(res);
+			radarFirst.chart.initChart();
+			attentChart.chart.initChart(result1);
+		});
+	} catch (error) {
+		message.error(error);
+	} finally {
+		github.loading = false;
 		initLoading.value = false;
 	}
 };
