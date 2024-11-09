@@ -34,7 +34,7 @@
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-center-item" :span="24">
-								<ModuleItem title="Github指数" :loading="github.loading">
+								<ModuleItem title="项目活跃度Top24" :loading="github.loading">
 									<div class="virtual-list-content">
 										<list-header :titleList="titleList" />
 										<new-virtual-list :data-source="github.dataSource" :loading="github.loading" class="virtual-list">
@@ -70,11 +70,6 @@
 									<div :ref="attentChart.container" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
-							<!--							<a-col class="chart-content-right-item" :span="24">-->
-							<!--								<ModuleItem title="开发者活跃度" :loading="initLoading">-->
-							<!--									<div :ref="deverChart.container" class="chart-container"></div>-->
-							<!--								</ModuleItem>-->
-							<!--							</a-col>-->
 							<a-col class="chart-content-right-item" :span="24">
 								<ModuleItem title="项目活跃度" :loading="initLoading">
 									<div :ref="projectChart.container" class="chart-container"></div>
@@ -209,9 +204,14 @@ const getInitData = async () => {
 			reviewEfficient.chart.initChart(res);
 			radarFirst.chart.initChart();
 			attentChart.chart.initChart(result1);
+			projectChart.chart.initChart(1);
 		});
 	} catch (error) {
-		message.error(error);
+		if (error instanceof Error) {
+			message.error(error.message);
+		} else {
+			console.log(error);
+		}
 	} finally {
 		github.loading = false;
 		initLoading.value = false;

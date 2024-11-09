@@ -140,19 +140,6 @@ export default function (): RadarChartType {
 	 */
 	function initChart(): any {
 		if (!container.value) return;
-		// const radarData: RadarSeriesOption['data'] = [];
-		// nodes &&
-		// 	nodes.forEach((item: any) => {
-		// 		chart.selectValue.push(item);
-		// 		const obj = {
-		// 			value: [+item.influence, +item.response, +item.activity, +item.trend, +item.github],
-		// 			name: item.name,
-		// 			areaStyle: { opacity: 0.4 }
-		// 		};
-		// 		radarData.push(obj);
-		// 	});
-		// calcMax();
-
 		const option = getOption();
 		// (option.series as RadarSeriesOption).data?.push(...radarData);
 		chartRef.value = echarts.init(container.value);

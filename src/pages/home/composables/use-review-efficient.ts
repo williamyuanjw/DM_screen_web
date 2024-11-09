@@ -1,15 +1,10 @@
 import { ref, reactive, shallowRef } from 'vue';
 import echarts from '@/echarts';
-import { PieSeriesOption } from 'echarts';
 import { EChartsType } from 'echarts/core';
-import type { LineChartType, MuSelectValueType } from '../data';
-
+import type { LineChartType } from '../data';
 import { handleChartResize, handleTimerType } from '@/utils/base';
-import { getCommits } from '../service';
 import { message } from 'ant-design-vue';
-export default function (
-	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void
-): LineChartType {
+export default function (): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 
@@ -31,8 +26,7 @@ export default function (
 				data: ['2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1']
 			},
 			tooltip: {
-				formatter: function (name) {
-
+				formatter: function (name:any) {
 					return `commit：${name.value}`
 				}
 			},
@@ -48,17 +42,20 @@ export default function (
 	}
 	/**
 	 * 初始化图表
-	 * @param container 图表容器id
 	 */
 	async function initChart(node:any): Promise<void> {
 		if (!container.value) return;
+
 		const option = getOption();
 		try {
-			let map = node.data.columnDate.map(v => handleTimerType(v));
-			option.xAxis.data = map
+			option.xAxis.data = node.data.columnDate.map((v:string) => handleTimerType(v));
 			option.series.data = node.data.commit;
 		} catch (error) {
-			message.error(error as unknown as string);
+			if(error instanceof Error) {
+				message.error(error.message);
+			}else {
+				console.error('An unknown error occurred:', error);
+			}
 		}
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
@@ -78,7 +75,6 @@ export default function (
 	 */
 	function resizeChart(): void {
 		if (chartRef.value) {
-			initChart(null);
 			handleChartResize(chartRef.value);
 			resetFontSize();
 		}
@@ -87,13 +83,13 @@ export default function (
 	/**
 	 * @description 自定义toolbox restore方法
 	 */
-	function handleRestore() {
-		const option = getOption();
-		if (chartRef.value) {
-			chartRef.value.clear();
-			chartRef.value.setOption(option);
-		}
-	}
+	// function handleRestore() {
+	// 	const option = getOption();
+	// 	if (chartRef.value) {
+	// 		chartRef.value.clear();
+	// 		chartRef.value.setOption(option);
+	// 	}
+	// }
 
 	return {
 		chart,
