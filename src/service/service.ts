@@ -6,7 +6,7 @@ import { message } from 'ant-design-vue';
 const env = import.meta.env.DEV;
 const defaultContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 const service = axios.create({
-	baseURL: 'http://localhost:3000', // api的base_url
+	baseURL: 'http://1.94.195.239:3001', // api的base_url
 	timeout: 50000, // 请求超时时间
 	// withCredentials: true, // 跨域携带cookie
 	validateStatus: (status: number) => {
@@ -25,11 +25,11 @@ const getToken = function (): string {
 const formatUrl = (config: InternalAxiosRequestConfig<any>): string | undefined => {
 	if (!config.url) return;
 	// 如果是开发环境
+	const envPath = '/api';
 	if (env) {
-		const envPath = '/api';
 		return `${envPath}${config.url}`;
 	} else {
-		return `${config.url}`;
+		return `${envPath}${config.url}`;
 	}
 };
 

@@ -1,12 +1,9 @@
 import { ref, reactive, shallowRef } from 'vue';
-import { PieSeriesOption, EChartsOption } from 'echarts';
 import echarts from '@/echarts';
 
 import { EChartsType } from 'echarts/core';
-import type { LineChartType, MuSelectValueType, intervalMapType } from '../data';
-import { getHtmlFontPX, handleChartResize, handleTimerType } from '@/utils/base';
-import ThemeColor from '@/themeColor';
-import { colorList } from '../config';
+import type { LineChartType, MuSelectValueType } from '../data';
+import {  handleChartResize, handleTimerType } from '@/utils/base';
 
 export default function (props?: {
 	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void;
@@ -314,7 +311,6 @@ export default function (props?: {
 	return {
 		chart,
 		container,
-		chartRef,
-		initChart
+		chartRef
 	};
 }

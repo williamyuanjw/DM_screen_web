@@ -56,10 +56,10 @@ export const getHtmlFontPX = (remValue: number) => {
 export const handleChartResize = (chartRef: EChartsType) => {
 	chartRef &&
 		chartRef.resize({
-			animation: {
-				duration: 300,
-				easing: 'cubicInOut'
-			}
+			// animation: {
+			// 	duration: 300,
+			// 	easing: 'cubicInOut'
+			// }
 		});
 };
 /**

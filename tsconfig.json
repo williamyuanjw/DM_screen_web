@@ -7,7 +7,7 @@
 		"types": ["vite/client", "node"],
 		"allowSyntheticDefaultImports": true,
 		"allowJs": true,
-    "skipLibCheck": true,
+//    "skipLibCheck": true,
 
     /* Bundler mode */
     "moduleResolution": "node",

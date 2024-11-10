@@ -6,30 +6,30 @@
 			<a-col class="index-col">{{ renderGit.toFixed(2) }}</a-col>
 		</a-row>
 		<a-row class="index-row-label">
-			<a-col class="index-col">OpenRank平均值</a-col>
-			<a-col class="index-col">GitHub平均值</a-col>
+			<a-col class="index-col">gsap</a-col>
+			<a-col class="index-col">gsap</a-col>
 		</a-row>
 	</div>
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, watch } from 'vue';
-import gsap from 'gsap';
+import { PropType, ref, watch } from 'vue';import gsap from 'gsap';
+
 
 const props = defineProps({
 	initData: {
-		type: Object as PropType<{ openRank: string | number; gitHub: string | number }>,
+		type: Object as PropType<{ openRank: number ; gitHub: number }>,
 		default: () => ({ openRank: 0, gitHub: 0 })
 	}
 });
 
-const renderOpen = ref<number | string>(props.initData.openRank);
-const renderGit = ref<number | string>(props.initData.gitHub);
+const renderOpen = ref<number>(props.initData.openRank);
+const renderGit = ref<number>(props.initData.gitHub);
 
 watch(
 	() => props.initData,
 	value => {
-		gsap.to(renderOpen, { duration: 1, value: +value.openRank });
+		gsap.to(renderOpen, { duration: 1, value: -value.openRank });
 		gsap.to(renderGit, { duration: 1, value: +value.gitHub });
 	},
 	{

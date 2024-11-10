@@ -1,9 +1,5 @@
 import { GET } from '@/service/api';
 
-export const getOptions = () => {
-	return GET('/api/home/getOptions');
-};
-
 export const getInit = () => {
 	return GET('/home/getInitData');
 };

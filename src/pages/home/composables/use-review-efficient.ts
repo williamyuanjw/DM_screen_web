@@ -4,7 +4,7 @@ import { EChartsType } from 'echarts/core';
 import type { LineChartType } from '../data';
 import { handleChartResize, handleTimerType } from '@/utils/base';
 import { message } from 'ant-design-vue';
-export default function (): LineChartType {
+export default function (props): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 
@@ -23,7 +23,7 @@ export default function (): LineChartType {
 		const option = {
 			xAxis: {
 				type: 'category',
-				data: ['2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1', '2024-12-1']
+				data: []
 			},
 			tooltip: {
 				formatter: function (name:any) {
@@ -45,7 +45,6 @@ export default function (): LineChartType {
 	 */
 	async function initChart(node:any): Promise<void> {
 		if (!container.value) return;
-
 		const option = getOption();
 		try {
 			option.xAxis.data = node.data.columnDate.map((v:string) => handleTimerType(v));
@@ -73,8 +72,9 @@ export default function (): LineChartType {
 	/**
 	 * @description 处理图表resize
 	 */
-	function resizeChart(): void {
+	async function resizeChart()		 {
 		if (chartRef.value) {
+
 			handleChartResize(chartRef.value);
 			resetFontSize();
 		}
@@ -95,6 +95,7 @@ export default function (): LineChartType {
 		chart,
 		container,
 		chartRef,
+		resizeChart,
 		getOption
 	};
 }

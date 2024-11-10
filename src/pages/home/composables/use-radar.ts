@@ -7,13 +7,10 @@ import type { RadarChartType } from '../data';
 import { getHtmlFontPX, handleChartResize } from '@/utils/base';
 import { colorList } from '../config';
 import ThemeColor from '@/themeColor';
-import useGithubStore from '@/store/github';
 import { message } from 'ant-design-vue';
 import { RadarOption } from 'echarts/types/dist/shared';
-// import { GitHubItem } from './use-github';
 
 export default function (): RadarChartType {
-	const githubStore = useGithubStore();
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 	const chart = reactive<RadarChartType['chart']>({
@@ -42,7 +39,7 @@ export default function (): RadarChartType {
 				// 	触发类型。数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用。
 				trigger: 'item',
 				// 提示框触发的条件，可选：'mousemove' | 'click' | 'mousemove|click' | 'none' | 'auto'
-				triggerOn: 'click',
+				triggerOn: 'mousemove',
 				// 鼠标是否可进入提示框浮层中，默认为false，如需详情内交互，如添加链接，按钮，可设置为 true。
 				enterable: true,
 				className: 'tooltip-review',
@@ -64,7 +61,7 @@ export default function (): RadarChartType {
 						<div class="tooltip-item">
 							<div class="tooltip-label-icon">
 								<div class="tooltip-icon" style="background-color: ${params.color}"></div>
-								<div class="tooltip-label">${indicator.value![index]}：</div>
+								<div class="tooltip-label">${indicator.value![index].name}：</div>
 							</div>
 							<span class="tooltip-value">${item}</span>
 						</div>

@@ -112,7 +112,10 @@ const onFinish = async () => {
 		password: formModel.passWord
 	};
 	const res = await login(postData);
-	if (res.code === 1) return;
+	if (res.code === 1) {
+		message.error(res.msg);
+		return
+	};
 	router.push('/home');
 	message.success('登录成功');
 };

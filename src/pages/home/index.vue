@@ -15,8 +15,25 @@
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-left-item" :span="24">
-								<ModuleItem title="OpenRank" :loading="initLoading">
-									<div :ref="openRankChart.container" class="chart-container"></div>
+								<ModuleItem title="" :loading="initLoading">
+									<!--									<div :ref="openRankChart.container" class="chart-container"></div>-->
+									<div style="text-indent: 2rem" class="openText">
+										本项目使用Vue3框架结合Ant Design of Vue
+										组件库开发，开发语言使用TypeScript，结合第三方库Echarts完成可视化系统开发。
+										项目的数据都是真实数据，从GitHub官网download下来的数据和从一些网站获取到的数据。
+										<div>
+											<br />
+											Github:
+											<a target="_blank" href="https://github.com/remember123456789/DM_screen_web">
+												https://github.com/remember123456789/DM_screen_web
+											</a>
+											<!--												1.使用vue Hooks封装Echarts组件,提升代码的复用性-->
+											<!--												<br/>-->
+											<!--												2.不定高无限滚加载虚拟列表-->
+											<!--												<br/>-->
+											<!--												3.实现对不同大小的屏幕/设备的良好适配-->
+										</div>
+									</div>
 								</ModuleItem>
 							</a-col>
 						</a-row>
@@ -119,7 +136,7 @@ import useOptionStore from '@/store/option';
 import useInitData from '@/store/initData';
 
 import { titleList, leftRightCol, centerCol } from './config';
-import { getCodeCommit, getCommits, getOptions, getProjectList } from './service';
+import { getCodeCommit, getCommits, getProjectList } from './service';
 import { message } from 'ant-design-vue';
 
 const chartModalData = useChartModal();
@@ -132,6 +149,7 @@ const github = useGithub();
 const radarFirst = useRadar();
 const optionStore = useOptionStore();
 const initDataStore = useInitData();
+const time = 3600000;
 /**
  * @description 处理全部图表的缩放
  */
@@ -165,15 +183,9 @@ const loadImg = () => {
 	});
 };
 
-const getOptionsData = async () => {
-	const res = await getOptions();
-	if (res.code === 200) {
-		optionStore.option = res.data || [];
-	}
-};
 
 const initData = reactive({
-	openRank: 20.1,
+	openRank: 90,
 	gitHub: 20
 });
 
@@ -206,6 +218,10 @@ const getInitData = async () => {
 			attentChart.chart.initChart(result1);
 			projectChart.chart.initChart(1);
 		});
+		setInterval(() => {
+			initData['gitHub'] += 1;
+			initData['openRank'] -= 2;
+		}, 5000);
 	} catch (error) {
 		if (error instanceof Error) {
 			message.error(error.message);
@@ -220,10 +236,12 @@ const getInitData = async () => {
 
 onMounted(() => {
 	loadImg();
-	getOptionsData();
 	getInitData();
 	github.addData();
 	window.addEventListener('resize', chartResize);
+	setInterval(() => {
+		getInitData();
+	}, time);
 });
 
 onBeforeUnmount(() => {
@@ -365,6 +383,12 @@ onBeforeUnmount(() => {
 			}
 		}
 	}
+}
+
+.openText {
+	width: 97%;
+	margin: auto;
+	color: white;
 }
 </style>
 
