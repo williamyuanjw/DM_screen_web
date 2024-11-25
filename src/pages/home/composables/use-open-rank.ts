@@ -3,11 +3,11 @@ import echarts from '@/echarts';
 
 import { EChartsType } from 'echarts/core';
 import type { LineChartType, MuSelectValueType } from '../data';
-import {  handleChartResize, handleTimerType } from '@/utils/base';
+import { handleChartResize, handleTimerType } from '@/utils/base';
 
 export default function (props?: {
 	showHandler?: (visible: boolean, type: number, selectValue: MuSelectValueType) => void;
-	type: number;
+	type?: number;
 }): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
@@ -35,8 +35,8 @@ export default function (props?: {
 				},
 				grid: {
 					right: '20%',
-					textStyle:{
-						color:'write'
+					textStyle: {
+						color: 'write'
 					}
 				},
 				legend: {
@@ -262,28 +262,26 @@ export default function (props?: {
 	 * 初始化图表
 	 * @param container 图表容器id
 	 */
-	function initChart(nodes: any): any {
+	function initChart(nodes?: any): any {
 		if (!container.value) return;
-
+		let option = {};
 		if (props?.type === 5) {
-			let option = getOption();
-			console.log(option);
-			chartRef.value = echarts.init(container.value);
-			chartRef.value && chartRef.value.setOption(option);
-			return;
+			option = getOption();
+		} else if (props?.type === 4) {
+			console.log(nodes, 'nodes');
+			// 数据格式处理
+			let DateTime: Array<string> = [];
+			let CommitData: Array<number> = [];
+			let deleteData: Array<number> = [];
+			nodes.data.forEach((v: { DateTime: string; Additions: number; Deletions: number }) => {
+				DateTime.push(handleTimerType(v.DateTime));
+				CommitData.push(v.Additions);
+				deleteData.push(-v.Deletions);
+			});
+			option = getOption(DateTime);
+			option.series[0].data = CommitData;
+			option.series[1].data = deleteData;
 		}
-		// 数据格式处理
-		let DateTime: Array<string> = [];
-		let CommitData: Array<number> = [];
-		let deleteData: Array<number> = [];
-		nodes.data.forEach((v: { DateTime: string; Additions: number; Deletions: number }) => {
-			DateTime.push(handleTimerType(v.DateTime));
-			CommitData.push(v.Additions);
-			deleteData.push(-v.Deletions);
-		});
-		const option = getOption(DateTime);
-		option.series[0].data = CommitData;
-		option.series[1].data = deleteData;
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
@@ -291,20 +289,13 @@ export default function (props?: {
 	/**
 	 * @description 重新set一下resize后的字体 不然会有偏移
 	 */
-	function resetFontSize() {
-		const option = getOption();
-		// 需要重新计算字体不然依旧会有点偏差
-		chartRef.value && chartRef.value.setOption(option);
-	}
 
 	/**
 	 * @description 处理图表resize
 	 */
 	function resizeChart() {
 		if (chartRef.value) {
-			initChart(null);
 			handleChartResize(chartRef.value);
-			resetFontSize();
 		}
 	}
 

@@ -132,9 +132,6 @@ import useChartModal from './composables/use-chart-modal';
 import useGithub from './composables/use-github';
 import useRadar from './composables/use-radar';
 
-import useOptionStore from '@/store/option';
-import useInitData from '@/store/initData';
-
 import { titleList, leftRightCol, centerCol } from './config';
 import { getCodeCommit, getCommits, getProjectList } from './service';
 import { message } from 'ant-design-vue';
@@ -147,8 +144,7 @@ const projectChart = useOpenRank({ showHandler: chartModalData.changeVisible, ty
 const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
 const github = useGithub();
 const radarFirst = useRadar();
-const optionStore = useOptionStore();
-const initDataStore = useInitData();
+
 const time = 3600000;
 /**
  * @description 处理全部图表的缩放
@@ -163,26 +159,23 @@ const chartResize = debounce(() => {
 });
 
 const loadShow = ref<boolean>(true);
-const imgCount = 6;
-let curCount = 0;
-const addImgCount = () => {
-	curCount++;
-	if (curCount === imgCount) {
-		loadShow.value = false;
-	}
-};
 // 异步图片加载方式
 const loadImg = () => {
 	const imgArr = [indexImg, centerImg, headerImg, mapImg, lbxImg, jtImg];
-	imgArr.forEach(item => {
-		const newImage = new Image();
-		newImage.src = item;
-		newImage.onload = () => {
-			addImgCount();
-		};
+	let promiseList = imgArr.map(item => {
+		return new Promise(resolve => {
+			const newImg = new Image();
+			newImg.src = item;
+			newImg.onload = () => {
+				resolve(true);
+			};
+		});
+	});
+
+	Promise.all(promiseList).then(() => {
+		loadShow.value = false;
 	});
 };
-
 
 const initData = reactive({
 	openRank: 90,
@@ -192,20 +185,6 @@ const initData = reactive({
 const initLoading = ref<boolean>(false);
 const getInitData = async () => {
 	initLoading.value = true;
-	// const res = await getInit();
-	// // 请求数据初始化
-	// nextTick(() => {
-	// 	initDataStore.list = res.data.list || [];
-	// 	openRankChart.chart.initChart(res.data.list, 'openrank');
-	// 	deverChart.chart.initChart(res.data.list, 'developer_activity');
-	// 	attentChart.chart.initChart(res.data.list, 'project_attention');
-	// 	projectChart.chart.initChart(res.data.list, 'project_activity');
-	// 	reviewEfficient.chart.initChart(res.data.list, 'review_efficiency');
-	// 	radarFirst.chart.initChart(res.data.list);
-	// });
-	// initData.openRank = res.data.other.openrankAverage;
-	// initData.gitHub = res.data.other.githubAverage;
-
 	try {
 		const res = await getCommits();
 		const result = await getProjectList();
@@ -216,7 +195,7 @@ const getInitData = async () => {
 			reviewEfficient.chart.initChart(res);
 			radarFirst.chart.initChart();
 			attentChart.chart.initChart(result1);
-			projectChart.chart.initChart(1);
+			projectChart.chart.initChart();
 		});
 		setInterval(() => {
 			initData['gitHub'] += 1;

@@ -4,7 +4,7 @@ import { EChartsType } from 'echarts/core';
 import type { LineChartType } from '../data';
 import { handleChartResize, handleTimerType } from '@/utils/base';
 import { message } from 'ant-design-vue';
-export default function (props): LineChartType {
+export default function (): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
 
@@ -43,7 +43,7 @@ export default function (props): LineChartType {
 	/**
 	 * 初始化图表
 	 */
-	async function initChart(node:any): Promise<void> {
+	async function initChart(node?:any): Promise<void> {
 		if (!container.value) return;
 		const option = getOption();
 		try {
@@ -59,37 +59,15 @@ export default function (props): LineChartType {
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
-
-	/**
-	 * @description 重新set一下resize后的字体 不然会有偏移
-	 */
-	function resetFontSize() {
-		const option = getOption();
-		// 需要重新计算字体不然依旧会有点偏差
-		chartRef.value && chartRef.value.setOption(option);
-	}
-
 	/**
 	 * @description 处理图表resize
 	 */
 	async function resizeChart()		 {
 		if (chartRef.value) {
-
 			handleChartResize(chartRef.value);
-			resetFontSize();
 		}
 	}
 
-	/**
-	 * @description 自定义toolbox restore方法
-	 */
-	// function handleRestore() {
-	// 	const option = getOption();
-	// 	if (chartRef.value) {
-	// 		chartRef.value.clear();
-	// 		chartRef.value.setOption(option);
-	// 	}
-	// }
 
 	return {
 		chart,

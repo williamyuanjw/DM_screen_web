@@ -24,8 +24,7 @@ export default function (): RadarChartType {
 		{ name: 'start', max: 120 },
 		{ name: 'fork', max: 120 },
 		{ name: 'rank', max: 120 }
-		// { name: 'Trend', max: 120 },
-		// { name: 'GitHub', max: 120 }
+
 	]);
 	/**
 	 * @returns 返回option配置
@@ -143,15 +142,6 @@ export default function (): RadarChartType {
 		chartRef.value && chartRef.value.setOption(option);
 	}
 
-	/**
-	 * @description 重新set一下resize后的字体 不然会有偏移
-	 */
-	function resetFontSize() {
-		const option = getOption();
-		delete option.series;
-		// 需要重新计算字体不然依旧会有点偏差
-		chartRef.value && chartRef.value.setOption(option);
-	}
 
 	/**
 	 * @description 处理图表resize
@@ -159,7 +149,6 @@ export default function (): RadarChartType {
 	function resizeChart() {
 		if (chartRef.value) {
 			handleChartResize(chartRef.value);
-			resetFontSize();
 		}
 	}
 
@@ -182,24 +171,6 @@ export default function (): RadarChartType {
 		};
 		const curOption = chartRef.value?.getOption();
 		curOption.series[0].data.push(obj);
-
-		console.log(curOption);
-
-		// const item = githubStore.list.find(item => item.name === name)!;
-		// const obj = {
-		// 	value: [item.influence, item.response, item.activity, item.trend, item.github],
-		// 	name: item.name,
-		// 	areaStyle: { opacity: 0.2 }
-		// };
-		// const curOptions = chartRef.value?.getOption();
-		//
-		// if (curOptions && Array.isArray(curOptions.series)) {
-		// 	chart.selectValue.push(item);
-		// 	curOptions.series[0].data.push(obj);
-		// 	calcMax();
-		// 	(curOptions.radar as any)[0].indicator = indicator.value;
-		// 	chartRef.value?.setOption(curOptions);
-		// }
 	}
 
 	watch(
