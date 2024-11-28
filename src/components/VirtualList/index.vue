@@ -285,11 +285,10 @@ watch(
 
 <style scoped lang="scss">
 // 隐藏滚动条
-::-webkit-scrollbar {
-	display: none;
-	background-color: transparent;
-}
-
+// ::-webkit-scrollbar {
+// 	display: none;
+// 	background-color: transparent;
+// }
 .fs-estimated-virtuallist {
 	&-container {
 		position: relative;

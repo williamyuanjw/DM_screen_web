@@ -6,6 +6,7 @@ import path from 'path';
 import viteCompression from 'vite-plugin-compression';
 // import postcsspxtoviewport from 'postcss-px-to-viewport';
 import postCssPxToRem from 'postcss-pxtorem';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,8 +16,9 @@ export default defineConfig({
 			resolvers: [AntDesignVueResolver()]
 		}),
 		viteCompression({
-			threshold: 10240
-		})
+			threshold: 10240 // // 如果体积大于阈值，将被压缩，单位为b，体积过小时请不要压缩，以免适得其反
+		}),
+		visualizer()
 	],
 	server: {
 		proxy: {
@@ -69,12 +71,14 @@ export default defineConfig({
 		}
 	},
 	build: {
+		// minify: false,
 		rollupOptions: {
 			output: {
 				chunkFileNames: 'js/[name]-[hash].js',
 				entryFileNames: 'js/[name]-[hash].js',
 				assetFileNames: '[ext]/[name]-[hash].[ext]',
 				manualChunks(id) {
+					// 简单分割一下 达到优化目的即可
 					if (id.includes('node_modules')) {
 						return id.toString().split('node_modules/')[1].split('/')[0].toString();
 					}

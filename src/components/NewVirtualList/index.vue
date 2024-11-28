@@ -14,7 +14,7 @@
 				</div>
 			</div>
 
-			<div class="fs-estimated-virtuallist-list" :style="scrollStyle2">
+			<div class="fs-estimated-virtuallist-list" :style="scrollStyle">
 				<div class="fs-estimated-virtuallist-list-item" v-for="i in virList" :key="i.project_id">
 					<slot name="item" :item="i"></slot>
 				</div>
@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { type CSSProperties, computed, onMounted, reactive, ref, watch, PropType, nextTick } from 'vue';
-import type { IPosInfo, VirtualStateType } from './data';
+import type { VirtualStateType } from './data';
 import { delayRef } from '@/utils/base';
 import { GitHubItem } from '@/pages/home/composables/use-github';
 import { debounce } from 'lodash';
@@ -51,8 +51,6 @@ const listRef = ref<HTMLDivElement>();
 
 const itemRef = ref<HTMLDivElement[]>();
 
-const positions = ref<IPosInfo[]>([]);
-
 const state = reactive<VirtualStateType>({
 	viewHeight: 0,
 	itemHeight: 0,
@@ -72,14 +70,6 @@ const virList = computed(() => propList.value.slice(0, state.maxCount)); // 复�
 const scrollStyle = computed(
 	() =>
 		({
-			height: `${state.itemHeight * renderList.value.length}px`,
-			transform: `translate3d(0, ${state.itemHeight * state.startIndex}px, 0)`
-		} as CSSProperties)
-);
-
-const scrollStyle2 = computed(
-	() =>
-		({
 			transform: `translate3d(0, ${state.itemHeight * state.startIndex}px, 0)`
 		} as CSSProperties)
 );
@@ -95,13 +85,7 @@ const move = () => {
 		return;
 	}
 	if (contentRef.value) {
-		// 实际不会触发 只会触发handleScroll
-		if (positions.value.length && contentRef.value.scrollTop >= positions.value[positions.value.length - 1].bottom) {
-			contentRef.value.scrollTop = 0;
-			!props.loading && emit('scroll-end');
-		} else {
-			contentRef.value.scrollTop += 1;
-		}
+		contentRef.value.scrollTop += 1;
 	}
 	state.rafTimer = delayRef(move);
 };
@@ -169,8 +153,8 @@ const addNewList = () => {
  * @description 重新计算最大数
  */
 const handleSetPosition = () => {
-	state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
 	nextTick(() => {
+		state.viewHeight = contentRef.value ? contentRef.value.offsetHeight : 0;
 		if (itemRef.value) {
 			// 拿数组第一项计算最大
 			state.maxCount = Math.ceil(state.viewHeight / itemRef.value[0].offsetHeight) + 1;
@@ -215,12 +199,6 @@ watch(
 </script>
 
 <style scoped lang="scss">
-// 隐藏滚动条
-::-webkit-scrollbar {
-	display: none;
-	background-color: transparent;
-}
-
 .fs-estimated-virtuallist {
 	&-container {
 		position: relative;
@@ -229,6 +207,7 @@ watch(
 	}
 
 	&-content {
+		scrollbar-width: none;
 		position: absolute;
 		width: 100%;
 		height: 100%;
