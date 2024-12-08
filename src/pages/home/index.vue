@@ -16,24 +16,8 @@
 							</a-col>
 							<a-col class="chart-content-left-item" :span="24">
 								<ModuleItem title="" :loading="initLoading">
-									<!--									<div :ref="openRankChart.container" class="chart-container"></div>-->
-									<div style="text-indent: 2rem" class="openText">
-										本项目使用Vue3框架结合Ant Design of Vue
-										组件库开发，开发语言使用TypeScript，结合第三方库Echarts完成可视化系统开发。
-										项目的数据都是真实数据，从GitHub官网download下来的数据和从一些网站获取到的数据。
-										<div>
-											<br />
-											Github:
-											<a target="_blank" href="https://github.com/remember123456789/DM_screen_web">
-												https://github.com/remember123456789/DM_screen_web
-											</a>
-											<!--												1.使用vue Hooks封装Echarts组件,提升代码的复用性-->
-											<!--												<br/>-->
-											<!--												2.不定高无限滚加载虚拟列表-->
-											<!--												<br/>-->
-											<!--												3.实现对不同大小的屏幕/设备的良好适配-->
-										</div>
-									</div>
+									<a-button type="primary">打开全屏</a-button>
+									<a-button>导入数据</a-button>
 								</ModuleItem>
 							</a-col>
 						</a-row>
@@ -42,12 +26,9 @@
 					<a-col v-bind="centerCol" class="chart-content-col">
 						<a-row class="chart-content-center">
 							<a-col class="chart-content-center-item" :span="24">
-								<ModuleItem :loading="initLoading">
-									<div class="index-data">
-										<index-num :initData="initData" />
-										<!--										雷达图-->
-										<radar-list :radarFirst="radarFirst" />
-									</div>
+								<ModuleItem :loading="initLoading" title="GitHub世界活跃区域">
+<!--									<div class="index-data">世界地图</div>-->
+									<div :ref="worldMap.chartRef" style="width: 100%; height: 100%" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
 							<a-col class="chart-content-center-item" :span="24">
@@ -101,11 +82,11 @@
 		</div>
 	</div>
 	<!-- 弹窗 -->
-	<chart-modal
-		v-model:visible="chartModalData.visible"
-		:type="chartModalData.type"
-		:defaultValue="chartModalData.selectValue"
-	/>
+	<!--	<chart-modal-->
+	<!--		v-model:visible=".visible"-->
+	<!--		:type="chartModalDachartModalDatata.type"-->
+	<!--		:defaultValue="chartModalData.selectValue"-->
+	<!--	/>-->
 </template>
 
 <script setup lang="ts">
@@ -121,19 +102,15 @@ import jtImg from '@/assets/images/jt.png';
 
 import HomeHeader from './components/home-header/index.vue';
 import EarthBg from './components/earth-bg/index.vue';
-import ChartModal from './components/chart-modal/index.vue';
 import ListHeader from './components/list-header/index.vue';
-import IndexNum from './components/index-num/index.vue';
-import RadarList from './components/radar-list/index.vue';
-
 import useOpenRank from './composables/use-open-rank';
 import useReviewEfficient from './composables/use-review-efficient';
 import useChartModal from './composables/use-chart-modal';
 import useGithub from './composables/use-github';
 import useRadar from './composables/use-radar';
-
+import useWorldMap from './composables/use-chart-worldmap';
 import { titleList, leftRightCol, centerCol } from './config';
-import { getCodeCommit, getCommits, getProjectList } from './service';
+import { getCodeCommit, getCommits, getProjectList, getWorldMap } from './service';
 import { message } from 'ant-design-vue';
 
 const chartModalData = useChartModal();
@@ -142,6 +119,7 @@ const deverChart = useOpenRank({ showHandler: chartModalData.changeVisible, type
 const attentChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 4 });
 const projectChart = useOpenRank({ showHandler: chartModalData.changeVisible, type: 5 });
 const reviewEfficient = useReviewEfficient(chartModalData.changeVisible);
+const worldMap = useWorldMap();
 const github = useGithub();
 const radarFirst = useRadar();
 
@@ -156,6 +134,7 @@ const chartResize = debounce(() => {
 	deverChart.chart.resizeChart();
 	attentChart.chart.resizeChart();
 	projectChart.chart.resizeChart();
+	worldMap.resizeChart();
 });
 
 const loadShow = ref<boolean>(true);
@@ -171,7 +150,6 @@ const loadImg = () => {
 			};
 		});
 	});
-
 	Promise.all(promiseList).then(() => {
 		loadShow.value = false;
 	});
@@ -186,16 +164,21 @@ const initLoading = ref<boolean>(false);
 const getInitData = async () => {
 	initLoading.value = true;
 	try {
-		const res = await getCommits();
-		const result = await getProjectList();
-		const result1 = await getCodeCommit();
+		// const res = await getCommits();
+		// const result = await getProjectList();
+		// const result1 = await getCodeCommit();
+		const resultMap = await getWorldMap();
+
+
+
 		// 数据初始化
 		nextTick(() => {
-			github.dataSource = result.data.trendingList;
-			reviewEfficient.chart.initChart(res);
-			radarFirst.chart.initChart();
-			attentChart.chart.initChart(result1);
-			projectChart.chart.initChart();
+			// github.dataSource = result.data.trendingList;
+			// reviewEfficient.chart.initChart(res);
+			// radarFirst.chart.initChart();
+			// attentChart.chart.initChart(result1);
+			// projectChart.chart.initChart();
+			worldMap.initData(resultMap);
 		});
 		setInterval(() => {
 			initData['gitHub'] += 1;
@@ -218,9 +201,9 @@ onMounted(() => {
 	getInitData();
 	github.addData();
 	window.addEventListener('resize', chartResize);
-	setInterval(() => {
-		getInitData();
-	}, time);
+	// setInterval(() => {
+	// 	getInitData();
+	// }, time);
 });
 
 onBeforeUnmount(() => {

@@ -44,7 +44,6 @@
 import { Rule } from 'ant-design-vue/lib/form';
 import { onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { login } from './service';
 import headerImg from '@/assets/images/login-header.png';
 import loginBgImg from '@/assets/images/login-bg.jpg';
 import { FormInstance } from 'ant-design-vue/es';
@@ -107,15 +106,10 @@ const loginForm = ref<FormInstance>();
 
 // 表单提交
 const onFinish = async () => {
-	const postData = {
-		username: formModel.userName,
-		password: formModel.passWord
-	};
-	const res = await login(postData);
-	if (res.code === 1) {
-		message.error(res.msg);
-		return
-	};
+	if (!formModel.passWord || !formModel.userName) {
+		message.error('请输入账号或密码');
+		return;
+	}
 	router.push('/home');
 	message.success('登录成功');
 };
@@ -133,7 +127,7 @@ onMounted(() => {
 	justify-content: center;
 	width: 100%;
 	height: 100%;
-	background: url('@/assets/images/login-bg.jpg') no-repeat;
+	background: url('@/assets/images/software.jpg') no-repeat;
 	background-size: 100% 100%;
 
 	&-header {

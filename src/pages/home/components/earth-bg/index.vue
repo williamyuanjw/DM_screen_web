@@ -56,7 +56,7 @@
 		background: url('@/assets/images/lbx.png');
 		background-size: 100% 100%;
 		opacity: 0.6;
-		animation: rotate1 15s linear infinite;
+		animation: rotate1 10s linear infinite;
 	}
 
 	.earth3 {

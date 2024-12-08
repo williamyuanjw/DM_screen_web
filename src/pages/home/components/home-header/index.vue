@@ -1,6 +1,6 @@
 <template>
 	<div class="home-header">
-		<div class="home-header-title">Github开发者活跃度</div>
+		<div class="home-header-title">Github社区活跃度</div>
 		<div class="home-header-time">
 			<span class="date-value">{{ date }}</span>
 			<span class="time-value">{{ time }}</span>

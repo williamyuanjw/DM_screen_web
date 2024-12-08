@@ -4,6 +4,7 @@ import { EChartsType } from 'echarts/core';
 import type { LineChartType } from '../data';
 import { handleChartResize, handleTimerType } from '@/utils/base';
 import { message } from 'ant-design-vue';
+
 export default function (): LineChartType {
 	const chartRef = shallowRef<EChartsType>();
 	const container = ref<HTMLDivElement | undefined>();
@@ -26,8 +27,8 @@ export default function (): LineChartType {
 				data: []
 			},
 			tooltip: {
-				formatter: function (name:any) {
-					return `commit：${name.value}`
+				formatter: function (name: any) {
+					return `commit：${name.value}`;
 				}
 			},
 			yAxis: {
@@ -40,40 +41,40 @@ export default function (): LineChartType {
 		};
 		return Object.assign(option, chart.extraOption);
 	}
+
 	/**
 	 * 初始化图表
 	 */
-	async function initChart(node?:any): Promise<void> {
+	async function initChart(node?: any): Promise<void> {
 		if (!container.value) return;
 		const option = getOption();
 		try {
-			option.xAxis.data = node.data.columnDate.map((v:string) => handleTimerType(v));
+			option.xAxis.data = node.data.columnDate.map((v: string) => handleTimerType(v));
 			option.series.data = node.data.commit;
 		} catch (error) {
-			if(error instanceof Error) {
+			if (error instanceof Error) {
 				message.error(error.message);
-			}else {
+			} else {
 				console.error('An unknown error occurred:', error);
 			}
 		}
 		chartRef.value = echarts.init(container.value);
 		chartRef.value && chartRef.value.setOption(option);
 	}
+
 	/**
 	 * @description 处理图表resize
 	 */
-	async function resizeChart()		 {
+	async function resizeChart() {
 		if (chartRef.value) {
 			handleChartResize(chartRef.value);
 		}
 	}
 
-
 	return {
 		chart,
 		container,
 		chartRef,
-		resizeChart,
 		getOption
 	};
 }
