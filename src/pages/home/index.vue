@@ -1,5 +1,5 @@
 <template>
-	<div class="home">
+	<div class="home" ref="home">
 		<transition-loading :isShow="loadShow" />
 		<div class="chart-list">
 			<home-header />
@@ -16,7 +16,7 @@
 							</a-col>
 							<a-col class="chart-content-left-item" :span="24">
 								<ModuleItem title="" :loading="initLoading">
-									<a-button type="primary">打开全屏</a-button>
+									<a-button type="primary" @click="openBigScreen" style="margin: 1rem">打开全屏</a-button>
 									<a-button>导入数据</a-button>
 								</ModuleItem>
 							</a-col>
@@ -27,7 +27,7 @@
 						<a-row class="chart-content-center">
 							<a-col class="chart-content-center-item" :span="24">
 								<ModuleItem :loading="initLoading" title="GitHub世界活跃区域">
-<!--									<div class="index-data">世界地图</div>-->
+									<!--									<div class="index-data">世界地图</div>-->
 									<div :ref="worldMap.chartRef" style="width: 100%; height: 100%" class="chart-container"></div>
 								</ModuleItem>
 							</a-col>
@@ -124,6 +124,7 @@ const github = useGithub();
 const radarFirst = useRadar();
 
 const time = 3600000;
+const home = ref<HTMLDivElement>();
 /**
  * @description 处理全部图表的缩放
  */
@@ -136,7 +137,10 @@ const chartResize = debounce(() => {
 	projectChart.chart.resizeChart();
 	worldMap.resizeChart();
 });
-
+const openBigScreen = () => {
+	home.value!.requestFullscreen();
+	chartResize();
+};
 const loadShow = ref<boolean>(true);
 // 异步图片加载方式
 const loadImg = () => {
@@ -164,20 +168,18 @@ const initLoading = ref<boolean>(false);
 const getInitData = async () => {
 	initLoading.value = true;
 	try {
-		// const res = await getCommits();
-		// const result = await getProjectList();
-		// const result1 = await getCodeCommit();
+		const res = await getCommits();
+		const result = await getProjectList();
+		const result1 = await getCodeCommit();
 		const resultMap = await getWorldMap();
-
-
 
 		// 数据初始化
 		nextTick(() => {
-			// github.dataSource = result.data.trendingList;
-			// reviewEfficient.chart.initChart(res);
-			// radarFirst.chart.initChart();
-			// attentChart.chart.initChart(result1);
-			// projectChart.chart.initChart();
+			github.dataSource = result.data.trendingList;
+			reviewEfficient.chart.initChart(res);
+			radarFirst.chart.initChart();
+			attentChart.chart.initChart(result1);
+			projectChart.chart.initChart();
 			worldMap.initData(resultMap);
 		});
 		setInterval(() => {
