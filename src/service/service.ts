@@ -6,8 +6,8 @@ import { message } from 'ant-design-vue';
 const env = import.meta.env.DEV;
 const defaultContentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 const service = axios.create({
-	// baseURL: 'http://1.94.195.239:3000', // api的base_url
-	baseURL: 'http://localhost:3000',
+	baseURL: 'http://1.94.195.239:3001', // api的base_url
+	// baseURL: 'http://localhost:3001',
 	timeout: 50000, // 请求超时时间
 	// withCredentials: true, // 跨域携带cookie
 	validateStatus: (status: number) => {

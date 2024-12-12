@@ -3,7 +3,7 @@ import echarts from '@/echarts';
 import { handleChartResize } from '@/utils/base';
 
 export default function useWorldMap() {
-	let chartRef = ref<HTMLDivElement | undefined>();
+	let chartRef = ref<HTMLDivElement | undefined | any>();
 
 	const getOption = () => {
 		return {
@@ -39,11 +39,11 @@ export default function useWorldMap() {
 		};
 	};
 
-	const initData = ({ data }) => {
-		console.log(chartRef.value, 'chartRef.value');
+	const initData = ({ data }: any) => {
+
 		let option = getOption();
 		chartRef.value = echarts.init(chartRef.value!);
-		echarts.registerMap('world', { geoJSON: data });
+		echarts.registerMap('world', data);
 		chartRef.value && chartRef.value.setOption(option);
 	};
 	const resizeChart = () => {

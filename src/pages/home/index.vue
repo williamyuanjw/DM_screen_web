@@ -123,7 +123,6 @@ const worldMap = useWorldMap();
 const github = useGithub();
 const radarFirst = useRadar();
 
-const time = 3600000;
 const home = ref<HTMLDivElement>();
 /**
  * @description 处理全部图表的缩放
